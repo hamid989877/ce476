@@ -1,0 +1,2391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nature Based Solutions for Efficient Use of Water Resources</title>
+  <style>
+    :root {
+      --bg: #06171b;
+      --bg-2: #0b2326;
+      --ink: #f6fbf8;
+      --muted: #b8d4cf;
+      --water: #53d5e5;
+      --water-2: #1b87b8;
+      --leaf: #77c86d;
+      --leaf-2: #2d8d60;
+      --gold: #f6c86f;
+      --clay: #e67f5f;
+      --berry: #b36a9f;
+      --line: rgba(246, 251, 248, 0.18);
+      --glass: rgba(7, 24, 27, 0.68);
+      --glass-2: rgba(255, 255, 255, 0.08);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+      --radius: 8px;
+      --max: 1180px;
+      --mx: 50vw;
+      --my: 50vh;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(112deg, transparent 0 58px, rgba(120, 235, 220, 0.07) 60px 62px, transparent 66px 128px),
+        repeating-linear-gradient(68deg, transparent 0 90px, rgba(246, 200, 111, 0.05) 92px 94px, transparent 98px 180px);
+      mix-blend-mode: screen;
+      opacity: 0.75;
+      animation: caustics 18s linear infinite;
+      z-index: 1;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.08) 42%, transparent 52%),
+        linear-gradient(180deg, rgba(6, 23, 27, 0.18), rgba(6, 23, 27, 0.48));
+      opacity: 0.6;
+      animation: light-sweep 12s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    .motion-bg {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 4;
+      opacity: 0.5;
+      mix-blend-mode: screen;
+    }
+
+    .mouse-field {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0.72;
+      background:
+        radial-gradient(circle at var(--mx) var(--my), rgba(83, 213, 229, 0.22), rgba(83, 213, 229, 0.08) 12vw, transparent 28vw),
+        radial-gradient(circle at calc(var(--mx) + 12vw) calc(var(--my) + 8vh), rgba(119, 200, 109, 0.12), transparent 24vw);
+      mix-blend-mode: screen;
+      transition: opacity 260ms ease;
+    }
+
+    @keyframes caustics {
+      0% { transform: translate3d(-2%, -1%, 0) rotate(0deg); }
+      50% { transform: translate3d(2%, 1%, 0) rotate(1deg); }
+      100% { transform: translate3d(-2%, -1%, 0) rotate(0deg); }
+    }
+
+    @keyframes light-sweep {
+      0%, 18% { transform: translateX(-24%); opacity: 0; }
+      40% { opacity: 0.38; }
+      62%, 100% { transform: translateX(28%); opacity: 0; }
+    }
+
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      isolation: isolate;
+      z-index: 3;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      align-items: center;
+      padding: 64px 72px 76px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(30px) scale(0.985);
+      transition: opacity 480ms ease, transform 580ms ease;
+    }
+
+    .slide::before,
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .slide::before {
+      z-index: 1;
+      opacity: 0.42;
+      background:
+        radial-gradient(520px 300px at var(--mx) var(--my), rgba(83, 213, 229, 0.16), transparent 74%),
+        repeating-radial-gradient(ellipse at 18% 110%, transparent 0 31px, rgba(83, 213, 229, 0.06) 33px 35px, transparent 38px 68px);
+      transform: translate3d(calc((50vw - var(--mx)) * 0.012), calc((50vh - var(--my)) * 0.012), 0);
+      animation: watershed-pulse 10s ease-in-out infinite alternate;
+    }
+
+    .slide::after {
+      z-index: 2;
+      top: auto;
+      height: 36%;
+      background:
+        linear-gradient(180deg, transparent, rgba(83, 213, 229, 0.08)),
+        repeating-linear-gradient(172deg, transparent 0 34px, rgba(83, 213, 229, 0.11) 36px 38px, transparent 40px 78px);
+      mask-image: linear-gradient(180deg, transparent, #000 32%, #000);
+      transform: translateY(12%);
+      animation: bottom-current 14s linear infinite;
+    }
+
+    @keyframes watershed-pulse {
+      from { opacity: 0.28; filter: hue-rotate(0deg); }
+      to { opacity: 0.52; filter: hue-rotate(14deg); }
+    }
+
+    @keyframes bottom-current {
+      from { background-position: 0 0, 0 0; }
+      to { background-position: 0 80px, 220px 0; }
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+    }
+
+    .slide.previous {
+      transform: translateX(-30px) scale(0.985);
+    }
+
+    .slide .content {
+      position: relative;
+      z-index: 4;
+      width: min(100%, var(--max));
+      margin: 0 auto;
+    }
+
+    .slide-title {
+      margin: 0;
+      font-size: 3.8rem;
+      line-height: 1.02;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+
+    .slide-subtitle {
+      max-width: 760px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 1.35rem;
+      line-height: 1.45;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--gold);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      background: currentColor;
+      box-shadow: 0 0 16px currentColor;
+    }
+
+    .source {
+      position: absolute;
+      left: 72px;
+      right: 210px;
+      bottom: 24px;
+      z-index: 6;
+      color: rgba(246, 251, 248, 0.62);
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .photo-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image: linear-gradient(90deg, rgba(4, 17, 20, 0.88), rgba(4, 17, 20, 0.52), rgba(4, 17, 20, 0.2)), var(--photo);
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.02);
+    }
+
+    .photo-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(0deg, rgba(6, 23, 27, 0.72), transparent 38%),
+        linear-gradient(140deg, rgba(83, 213, 229, 0.16), transparent 40%),
+        linear-gradient(35deg, rgba(119, 200, 109, 0.14), transparent 42%);
+    }
+
+    .hero .content {
+      width: min(100%, 1200px);
+    }
+
+    .hero h1 {
+      max-width: none;
+      margin: 0;
+      font-size: clamp(1.35rem, 2.95vw, 2.5rem);
+      line-height: 1;
+      letter-spacing: 0;
+      font-weight: 900;
+      white-space: nowrap;
+      text-shadow: 0 12px 40px rgba(0, 0, 0, 0.52);
+    }
+
+    .hero-title .word {
+      display: inline-block;
+      color: #f6fbf8;
+      animation: title-word-blue 7s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 420ms);
+    }
+
+    @keyframes title-word-blue {
+      0%, 9% { color: #f6fbf8; text-shadow: 0 12px 40px rgba(0, 0, 0, 0.52); }
+      15%, 21% { color: #53d5e5; text-shadow: 0 0 22px rgba(83, 213, 229, 0.95), 0 12px 40px rgba(0, 0, 0, 0.52); }
+      32%, 100% { color: #f6fbf8; text-shadow: 0 12px 40px rgba(0, 0, 0, 0.52); }
+    }
+
+    .hero .subtitle {
+      max-width: 780px;
+      margin: 26px 0 0;
+      color: #d9fff6;
+      font-size: 1.45rem;
+      line-height: 1.45;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      width: min(100%, 820px);
+      margin-top: 34px;
+    }
+
+    .hero-metrics .metric {
+      min-height: 92px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(5, 20, 23, 0.58);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.3;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+      gap: 36px;
+      align-items: center;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .panel,
+    .stat-card,
+    .archetype,
+    .step,
+    .mechanism,
+    .solution-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel,
+    .stat-card,
+    .archetype,
+    .step,
+    .mechanism,
+    .solution-card,
+    .metric {
+      transition: transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease, background 240ms ease;
+    }
+
+    .active .panel:hover,
+    .active .stat-card:hover,
+    .active .archetype:hover,
+    .active .step:hover,
+    .active .mechanism:hover,
+    .active .solution-card:hover,
+    .active .metric:hover {
+      transform: translateY(-4px);
+      border-color: rgba(83, 213, 229, 0.42);
+      box-shadow: 0 28px 78px rgba(0, 0, 0, 0.42), 0 0 36px rgba(83, 213, 229, 0.14);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.115), rgba(255, 255, 255, 0.052));
+    }
+
+    .panel {
+      padding: 28px;
+    }
+
+    .panel.light {
+      background: rgba(246, 251, 248, 0.94);
+      color: #103035;
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.18);
+    }
+
+    .panel h3,
+    .stat-card h3,
+    .archetype h3,
+    .solution-card h3 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    .panel p,
+    .archetype p,
+    .solution-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.48;
+    }
+
+    .panel.light p,
+    .panel.light li {
+      color: #32555a;
+    }
+
+    .big-number {
+      color: var(--gold);
+      font-size: 4.3rem;
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .number-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .stat-card {
+      position: relative;
+      min-height: 156px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, rgba(83, 213, 229, 0.14), transparent 45%, rgba(246, 200, 111, 0.09));
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .active .stat-card::before {
+      opacity: 1;
+      animation: card-glow 4.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes card-glow {
+      from { transform: translateX(-8%); }
+      to { transform: translateX(8%); }
+    }
+
+    .stat-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-card .big-number {
+      font-size: 3.2rem;
+    }
+
+    .stat-card p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.36;
+    }
+
+    .image-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      background: #0b2326;
+      transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+      transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    }
+
+    .image-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        linear-gradient(115deg, transparent 12%, rgba(255, 255, 255, 0.16) 38%, transparent 54%),
+        radial-gradient(circle at var(--mx) var(--my), rgba(83, 213, 229, 0.2), transparent 34%);
+      opacity: 0;
+      transform: translateX(-28%);
+      transition: opacity 260ms ease;
+    }
+
+    .active .image-frame::before {
+      animation: image-sheen 7s ease-in-out infinite;
+    }
+
+    .image-frame:hover {
+      border-color: rgba(83, 213, 229, 0.55);
+      box-shadow: 0 26px 82px rgba(0, 0, 0, 0.44), 0 0 42px rgba(83, 213, 229, 0.18);
+    }
+
+    .image-frame:hover::before {
+      opacity: 0.7;
+    }
+
+    @keyframes image-sheen {
+      0%, 40% { opacity: 0; transform: translateX(-42%); }
+      54% { opacity: 0.48; }
+      70%, 100% { opacity: 0; transform: translateX(42%); }
+    }
+
+    .image-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-frame.contain img {
+      object-fit: contain;
+      background: #f6fbf8;
+    }
+
+    .caption {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      z-index: 3;
+      padding: 9px 11px;
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: rgba(5, 20, 23, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 0.82rem;
+      line-height: 1.25;
+      backdrop-filter: blur(12px);
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      position: relative;
+      padding-left: 28px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.4;
+    }
+
+    .list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.48em;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--leaf);
+      box-shadow: 0 0 18px rgba(119, 200, 109, 0.75);
+    }
+
+    .donut-wrap {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 26px;
+      align-items: center;
+    }
+
+    .donut {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: conic-gradient(var(--leaf) 0 252deg, rgba(255, 255, 255, 0.13) 252deg 360deg);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 46px rgba(83, 213, 229, 0.16);
+    }
+
+    .donut::before {
+      content: "";
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
+      background: #0b2326;
+      border: 1px solid var(--line);
+      box-shadow: inset 0 0 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .donut-label {
+      position: absolute;
+      text-align: center;
+      color: var(--ink);
+      font-weight: 850;
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+
+    .donut-label span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 650;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .bar-chart {
+      display: grid;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 138px minmax(0, 1fr) 58px;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .bar-track {
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .bar-fill {
+      width: var(--w);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--water), var(--leaf));
+      box-shadow: 0 0 22px rgba(83, 213, 229, 0.32);
+      transform-origin: left;
+      transform: scaleX(0);
+    }
+
+    .active .bar-fill {
+      animation: grow-bar 900ms ease forwards;
+    }
+
+    @keyframes grow-bar {
+      to { transform: scaleX(1); }
+    }
+
+    .mechanism-map {
+      position: relative;
+      height: 460px;
+      min-height: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 70% 18%, rgba(83, 213, 229, 0.18), transparent 36%),
+        linear-gradient(180deg, rgba(8, 42, 51, 0.92), rgba(5, 18, 22, 0.96)),
+        linear-gradient(135deg, rgba(83, 213, 229, 0.18), rgba(119, 200, 109, 0.1));
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .diagram-title {
+      position: absolute;
+      left: 22px;
+      top: 18px;
+      z-index: 4;
+      color: #ecfff8;
+      font-size: 1rem;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .diagram-title span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 650;
+    }
+
+    .water-system-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .water-system-svg .system-arrow {
+      stroke: var(--water);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 14 18;
+      filter: drop-shadow(0 0 10px rgba(83, 213, 229, 0.65));
+      animation: flow 1.8s linear infinite;
+    }
+
+    .water-system-svg .infiltration-arrow {
+      stroke: #8ff1cb;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-dasharray: 8 14;
+      filter: drop-shadow(0 0 10px rgba(143, 241, 203, 0.58));
+      animation: flow 2.1s linear infinite;
+    }
+
+    .water-system-svg .runoff-risk {
+      stroke: rgba(230, 127, 95, 0.78);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 8 12;
+      animation: flow 1.4s linear infinite reverse;
+    }
+
+    .water-system-svg .rain {
+      stroke: rgba(125, 229, 243, 0.72);
+      stroke-width: 3;
+      stroke-linecap: round;
+      animation: rain-drop 1.7s linear infinite;
+    }
+
+    .water-system-svg .wetland-plant {
+      stroke: rgba(119, 200, 109, 0.78);
+      stroke-width: 4;
+      stroke-linecap: round;
+      fill: none;
+      filter: drop-shadow(0 0 8px rgba(119, 200, 109, 0.34));
+    }
+
+    .water-system-svg .pulse-water {
+      animation: water-pulse 3.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes rain-drop {
+      to { transform: translateY(18px); opacity: 0.28; }
+    }
+
+    @keyframes water-pulse {
+      from { opacity: 0.55; }
+      to { opacity: 0.95; }
+    }
+
+    @keyframes flow {
+      to { stroke-dashoffset: -32; }
+    }
+
+    .process-callout {
+      position: absolute;
+      z-index: 5;
+      width: 148px;
+      min-height: 82px;
+      padding: 10px 11px 10px 40px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(5, 20, 23, 0.76);
+      color: var(--ink);
+      font-size: 0.78rem;
+      line-height: 1.25;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24);
+      backdrop-filter: blur(14px);
+    }
+
+    .process-callout em {
+      position: absolute;
+      left: 10px;
+      top: 11px;
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      color: #062025;
+      background: var(--step-color);
+      font-style: normal;
+      font-size: 0.74rem;
+      font-weight: 900;
+      box-shadow: 0 0 18px color-mix(in srgb, var(--step-color), transparent 42%);
+    }
+
+    .process-callout strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--step-color);
+      font-size: 0.9rem;
+    }
+
+    .process-callout p {
+      margin: 0;
+      color: #cfe6e2;
+    }
+
+    .c-capture { left: 28px; top: 76px; --step-color: var(--gold); }
+    .c-slow { right: 28px; top: 86px; --step-color: var(--water); }
+    .c-filter { left: 36px; bottom: 92px; --step-color: var(--leaf); }
+    .c-store { right: 38px; bottom: 88px; --step-color: #8bd6ff; }
+    .c-recharge { left: 52%; top: 196px; transform: translateX(-50%); --step-color: #8ff1cb; }
+
+    .outcome-strip {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 14px;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .outcome {
+      min-height: 48px;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      color: #d9fff6;
+      font-size: 0.72rem;
+      line-height: 1.25;
+    }
+
+    .outcome strong {
+      display: block;
+      color: var(--gold);
+      font-size: 0.82rem;
+    }
+
+    .overlay-map {
+      height: 370px;
+      min-height: 0;
+    }
+
+    .overlay-chip {
+      position: absolute;
+      max-width: 220px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: var(--radius);
+      color: #072025;
+      background: rgba(246, 251, 248, 0.9);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+      font-size: 0.9rem;
+      line-height: 1.28;
+    }
+
+    .overlay-chip strong {
+      display: block;
+      color: #0a5556;
+      margin-bottom: 4px;
+    }
+
+    .chip-catchment { left: 28%; top: 12%; }
+    .chip-river { left: 11%; top: 57%; }
+    .chip-farm { right: 14%; top: 34%; }
+    .chip-city { right: 8%; bottom: 17%; }
+
+    .triptych {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .triptych .image-frame {
+      aspect-ratio: 1.36;
+    }
+
+    .timeline-label {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      min-width: 72px;
+      padding: 7px 9px;
+      border-radius: var(--radius);
+      background: rgba(246, 200, 111, 0.93);
+      color: #173236;
+      font-weight: 850;
+      font-size: 0.88rem;
+    }
+
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .risk-card {
+      min-height: 154px;
+      padding: 16px;
+    }
+
+    .radial {
+      --deg: calc(var(--value) * 3.6deg);
+      width: 104px;
+      height: 104px;
+      margin-bottom: 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--color) 0 var(--deg), rgba(255, 255, 255, 0.12) var(--deg) 360deg);
+      box-shadow: 0 0 32px color-mix(in srgb, var(--color), transparent 66%);
+    }
+
+    .radial::before {
+      content: attr(data-label);
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #0b2326;
+      color: var(--ink);
+      font-size: 1.35rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .risk-card .radial {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 10px;
+    }
+
+    .risk-card .radial::before {
+      width: 48px;
+      height: 48px;
+      font-size: 1rem;
+    }
+
+    .risk-card h3 {
+      margin-bottom: 6px;
+      font-size: 1.03rem;
+    }
+
+    .risk-card p {
+      margin-top: 0;
+      font-size: 0.84rem;
+      line-height: 1.28;
+    }
+
+    .archetype-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .archetype {
+      min-height: 396px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .archetype .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      margin-bottom: 16px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #062025;
+      background: var(--tag);
+      font-size: 0.78rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .archetype p {
+      font-size: 0.92rem;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mini-list li {
+      padding-left: 18px;
+      position: relative;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .mini-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.48em;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--tag);
+      box-shadow: 0 0 14px var(--tag);
+    }
+
+    .solution-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 16px;
+    }
+
+    .solution-card {
+      padding: 16px;
+    }
+
+    .solution-card h3 {
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .solution-card p {
+      font-size: 0.9rem;
+      line-height: 1.34;
+    }
+
+    .solution-card .mini-list {
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .solution-card .mini-list li {
+      font-size: 0.84rem;
+      line-height: 1.2;
+    }
+
+    .photo-strip {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .photo-strip .image-frame {
+      min-height: 0;
+      height: 174px;
+    }
+
+    .quality-graph {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .quality-graph .bar-row {
+      grid-template-columns: 190px minmax(0, 1fr) 56px;
+    }
+
+    .urban-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .mechanism {
+      position: relative;
+      min-height: 190px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .mechanism .icon {
+      width: 46px;
+      height: 46px;
+      margin-bottom: 14px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #062025;
+      background: var(--icon);
+      font-size: 1.4rem;
+      font-weight: 900;
+      box-shadow: 0 0 22px color-mix(in srgb, var(--icon), transparent 60%);
+    }
+
+    .mechanism h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+      line-height: 1.15;
+    }
+
+    .mechanism p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.34;
+    }
+
+    .governance-img {
+      aspect-ratio: 1.52;
+    }
+
+    .triad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .triad .panel {
+      min-height: 170px;
+      padding: 20px;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 32px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 255px;
+      padding: 22px 18px;
+      overflow: hidden;
+    }
+
+    .step::before {
+      content: attr(data-step);
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      margin-bottom: 18px;
+      border-radius: 50%;
+      background: var(--step-color);
+      color: #062025;
+      font-weight: 900;
+      box-shadow: 0 0 28px color-mix(in srgb, var(--step-color), transparent 58%);
+    }
+
+    .step h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      line-height: 1.15;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 43px;
+      right: -17px;
+      width: 34px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--step-color), transparent);
+      box-shadow: 0 0 14px var(--step-color);
+    }
+
+    .takeaway {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .takeaway .formula {
+      padding: 28px;
+      border-radius: var(--radius);
+      background: rgba(246, 251, 248, 0.94);
+      color: #0b2428;
+      box-shadow: var(--shadow);
+    }
+
+    .formula h2 {
+      margin: 0 0 20px;
+      font-size: 2rem;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .formula-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: #264a4f;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .formula-pill {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #dff4ec;
+      color: #0e4e4e;
+      border: 1px solid rgba(14, 78, 78, 0.18);
+    }
+
+    .sources-list {
+      display: grid;
+      gap: 18px;
+      margin: 26px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .sources-list li {
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .sources-list strong {
+      color: var(--ink);
+    }
+
+    .controls {
+      position: fixed;
+      right: 28px;
+      bottom: 22px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(5, 20, 23, 0.66);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .controls button {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 1.35rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .controls button:hover,
+    .controls button:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+      background: rgba(83, 213, 229, 0.22);
+    }
+
+    .count {
+      min-width: 60px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 750;
+    }
+
+    .progress {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 21;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--water), var(--leaf), var(--gold));
+      box-shadow: 0 0 20px rgba(83, 213, 229, 0.6);
+      transition: width 360ms ease;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    .active .reveal {
+      animation: reveal 680ms ease forwards;
+      animation-delay: var(--delay, 0ms);
+    }
+
+    @keyframes reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1060px) {
+      .slide {
+        padding: 44px 34px 76px;
+      }
+
+      .source {
+        left: 34px;
+        right: 170px;
+      }
+
+      .slide-title,
+      .hero h1:not(.hero-title) {
+        font-size: 3rem;
+      }
+
+      .grid-2,
+      .solution-layout,
+      .takeaway {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .hero-metrics,
+      .risk-grid,
+      .urban-grid,
+      .roadmap,
+      .archetype-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .archetype {
+        min-height: 290px;
+      }
+
+      .mechanism-map {
+        min-height: 460px;
+      }
+
+      .overlay-map {
+        height: 360px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      html,
+      body {
+        overflow: auto;
+      }
+
+      .deck {
+        min-height: 100vh;
+      }
+
+      .slide {
+        min-height: 100vh;
+        padding: 32px 20px 92px;
+      }
+
+      .slide-title,
+      .hero h1:not(.hero-title) {
+        font-size: 2.25rem;
+      }
+
+      .slide-subtitle,
+      .hero .subtitle {
+        font-size: 1.05rem;
+      }
+
+      .hero-metrics,
+      .number-grid,
+      .risk-grid,
+      .urban-grid,
+      .roadmap,
+      .archetype-grid,
+      .triptych,
+      .triad,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .source {
+        left: 20px;
+        right: 20px;
+        bottom: 62px;
+        font-size: 0.68rem;
+      }
+
+      .controls {
+        right: 16px;
+        bottom: 16px;
+      }
+
+      .controls button {
+        width: 38px;
+        height: 38px;
+      }
+
+      .donut-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .archetype {
+        min-height: auto;
+      }
+
+      .bar-row,
+      .quality-graph .bar-row {
+        grid-template-columns: 104px minmax(0, 1fr) 48px;
+      }
+
+      .overlay-chip,
+      .process-callout {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        transform: none;
+        width: auto;
+        max-width: none;
+        margin: 10px;
+      }
+
+      .mechanism-map {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+      }
+
+      .water-system-svg {
+        position: relative;
+        display: block;
+        height: 360px;
+      }
+
+      .diagram-title,
+      .outcome-strip {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        margin: 14px;
+      }
+
+      .outcome-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .overlay-map {
+        height: auto;
+        overflow: visible;
+      }
+
+      .overlay-map img {
+        height: auto;
+      }
+    }
+
+    @media print {
+      html,
+      body {
+        overflow: visible;
+        background: #fff;
+      }
+
+      body::before,
+      body::after,
+      .motion-bg,
+      .mouse-field,
+      .controls,
+      .progress {
+        display: none;
+      }
+
+      .deck {
+        height: auto;
+      }
+
+      .slide {
+        position: relative;
+        height: 100vh;
+        opacity: 1;
+        transform: none;
+        page-break-after: always;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .motion-bg,
+      .mouse-field {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="motionCanvas" class="motion-bg" aria-hidden="true"></canvas>
+  <div class="mouse-field" aria-hidden="true"></div>
+  <main class="deck" aria-live="polite">
+    <section class="slide hero active" data-title="Title" style="--photo: url('assets/terraced-water.jpg')">
+      <div class="photo-bg" aria-hidden="true"></div>
+      <div class="content">
+        <div class="kicker reveal">CE 476 presentation</div>
+        <h1 class="hero-title reveal" style="--delay: 100ms" aria-label="Nature Based Solutions for Efficient Use of Water Resources"><span class="word" style="--i:0">Nature</span> <span class="word" style="--i:1">Based</span> <span class="word" style="--i:2">Solutions</span> <span class="word" style="--i:3">for</span> <span class="word" style="--i:4">Efficient</span> <span class="word" style="--i:5">Use</span> <span class="word" style="--i:6">of</span> <span class="word" style="--i:7">Water</span> <span class="word" style="--i:8">Resources</span></h1>
+        <p class="subtitle reveal" style="--delay: 220ms">Using wetlands, soils, vegetation, floodplains, and local governance to keep water in the right place, at the right quality, for longer.</p>
+        <div class="hero-metrics">
+          <div class="metric reveal" style="--delay: 340ms">
+            <strong>Slow</strong>
+            <span>reduce runoff peaks and erosion</span>
+          </div>
+          <div class="metric reveal" style="--delay: 430ms">
+            <strong>Store</strong>
+            <span>hold water in soil, wetlands, aquifers</span>
+          </div>
+          <div class="metric reveal" style="--delay: 520ms">
+            <strong>Filter</strong>
+            <span>remove nutrients, sediments, pollutants</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Water pressure">
+      <div class="content grid-2">
+        <div>
+          <div class="kicker reveal">1. Why water efficiency needs a new lens</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">The crisis is about timing, quality, and allocation.</h2>
+          <p class="slide-subtitle reveal" style="--delay: 160ms">Conventional water efficiency often focuses on pipes, pumps, and canals. NbS adds a watershed view: reduce avoidable demand, hold rain where it falls, recharge groundwater, and protect water quality before treatment becomes expensive.</p>
+          <ul class="list">
+            <li class="reveal" style="--delay: 260ms">Global water withdrawals tripled over the last 50 years.</li>
+            <li class="reveal" style="--delay: 340ms">Population growth adds about 64 billion m<sup>3</sup> of freshwater demand each year.</li>
+            <li class="reveal" style="--delay: 420ms">By 2030, 47% of the world population is projected to live in high water-stress areas.</li>
+          </ul>
+        </div>
+        <div class="panel reveal" style="--delay: 260ms">
+          <div class="donut-wrap">
+            <div class="relative">
+              <div class="donut" aria-hidden="true"></div>
+              <div class="donut-label">70%<span>freshwater withdrawals</span></div>
+            </div>
+            <div>
+              <h3>Agriculture dominates demand</h3>
+              <p>Irrigated agriculture accounts for about 70% of freshwater withdrawals globally, and more than 90% in some regions.</p>
+              <div class="bar-chart" aria-label="Water pressure indicators">
+                <div class="bar-row">
+                  <span>Water use growth</span>
+                  <div class="bar-track"><div class="bar-fill" style="--w: 100%"></div></div>
+                  <strong>3x</strong>
+                </div>
+                <div class="bar-row">
+                  <span>2030 high stress</span>
+                  <div class="bar-track"><div class="bar-fill" style="--w: 47%"></div></div>
+                  <strong>47%</strong>
+                </div>
+                <div class="bar-row">
+                  <span>Ag. withdrawals</span>
+                  <div class="bar-track"><div class="bar-fill" style="--w: 70%"></div></div>
+                  <strong>70%</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Definition">
+      <div class="content grid-2">
+        <div class="image-frame contain reveal" style="--delay: 120ms">
+          <img src="assets/nbs-system-map.jpg" alt="Illustrated landscape showing examples of nature-based solutions for water management.">
+          <div class="caption">NbS connect catchment slopes, rivers, farms, wetlands, and cities into one water-management system.</div>
+        </div>
+        <div>
+          <div class="kicker reveal">2. What counts as NbS?</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">Nature is not decoration. It is infrastructure.</h2>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">Rey et al. define Nature-Based Solutions as actions that protect, sustainably manage, and restore ecosystems while responding to societal challenges and conserving biodiversity.</p>
+          <ul class="list">
+            <li class="reveal" style="--delay: 280ms">Water quantity: recharge aquifers, retain stormwater, sustain stream flow.</li>
+            <li class="reveal" style="--delay: 360ms">Water quality: filter sediments, nutrients, metals, hydrocarbons, and pesticides.</li>
+            <li class="reveal" style="--delay: 440ms">Risk reduction: lower flood peaks, drought impacts, erosion, and heat stress.</li>
+            <li class="reveal" style="--delay: 520ms">Co-benefits: habitat, cooling, recreation, landscape quality, and public health.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Mechanisms">
+      <div class="content grid-2">
+        <div>
+          <div class="kicker reveal">3. How NbS improves water efficiency</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">Efficiency means more useful water, not just less water.</h2>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">The most important move is to change the pathway of rain: from fast runoff and polluted discharge to slow storage, infiltration, filtration, and reuse.</p>
+          <ul class="list">
+            <li class="reveal" style="--delay: 280ms">Vegetation and roots increase infiltration and soil water-holding capacity.</li>
+            <li class="reveal" style="--delay: 360ms">Wetlands, swales, ponds, and floodplains delay peak flows.</li>
+            <li class="reveal" style="--delay: 440ms">Soil, plants, microbes, and sediments treat water before it reaches rivers.</li>
+            <li class="reveal" style="--delay: 520ms">Recharge areas keep groundwater available during dry periods.</li>
+          </ul>
+        </div>
+        <div class="mechanism-map reveal" style="--delay: 220ms">
+          <div class="diagram-title">One storm, five useful pathways<span>Nature changes fast runoff into stored, cleaner, reusable water.</span></div>
+          <svg class="water-system-svg" viewBox="0 0 860 540" role="img" aria-label="Nature-based water system diagram showing rainfall, slowed runoff, wetland filtration, water storage, aquifer recharge, and supported stream flow.">
+            <defs>
+              <linearGradient id="mechanismSky" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#0d4960"/>
+                <stop offset="1" stop-color="#092028"/>
+              </linearGradient>
+              <linearGradient id="mechanismLand" x1="0" x2="1">
+                <stop offset="0" stop-color="#2c7a5c"/>
+                <stop offset="0.55" stop-color="#77bd73"/>
+                <stop offset="1" stop-color="#2f8e68"/>
+              </linearGradient>
+              <linearGradient id="mechanismSoil" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#8b7458"/>
+                <stop offset="1" stop-color="#3c2d28"/>
+              </linearGradient>
+              <linearGradient id="mechanismAquifer" x1="0" x2="1">
+                <stop offset="0" stop-color="#1e83a7"/>
+                <stop offset="1" stop-color="#53d5e5"/>
+              </linearGradient>
+            </defs>
+            <rect width="860" height="540" fill="url(#mechanismSky)"/>
+            <path d="M0 274 C95 236 150 194 230 218 C312 242 340 286 426 274 C515 262 560 198 640 220 C718 242 760 272 860 246 L860 540 L0 540 Z" fill="url(#mechanismLand)" opacity="0.88"/>
+            <path d="M0 336 C140 308 270 324 405 304 C540 284 680 316 860 288 L860 540 L0 540 Z" fill="url(#mechanismSoil)" opacity="0.84"/>
+            <path class="pulse-water" d="M116 348 C210 326 281 344 364 342 C455 340 513 296 613 306 C710 316 774 300 860 286 L860 346 C744 366 671 372 590 354 C504 335 445 386 342 370 C246 355 180 368 116 348Z" fill="rgba(83,213,229,0.22)" stroke="rgba(83,213,229,0.42)" stroke-width="2"/>
+            <ellipse class="pulse-water" cx="430" cy="350" rx="150" ry="34" fill="rgba(83,213,229,0.22)" stroke="rgba(83,213,229,0.52)" stroke-width="2"/>
+            <path d="M0 430 C150 408 274 448 416 422 C540 399 686 424 860 402 L860 472 C688 492 544 468 416 486 C285 504 148 466 0 488 Z" fill="url(#mechanismAquifer)" opacity="0.33"/>
+            <path d="M156 108 C176 80 224 78 242 112 C282 109 306 133 306 162 C306 190 284 208 249 208 L150 208 C116 208 94 190 94 162 C94 132 118 108 156 108Z" fill="rgba(246,251,248,0.88)" opacity="0.85"/>
+            <line class="rain" x1="150" y1="232" x2="174" y2="276"/>
+            <line class="rain" x1="192" y1="228" x2="214" y2="272"/>
+            <line class="rain" x1="238" y1="230" x2="260" y2="272"/>
+            <path class="runoff-risk" d="M224 236 C318 310 458 330 598 298 C686 278 746 282 820 314"/>
+            <path class="system-arrow" d="M186 260 C246 318 338 352 426 348"/>
+            <path class="system-arrow" d="M584 300 C648 304 708 320 768 366"/>
+            <path class="infiltration-arrow" d="M430 358 C420 392 420 416 420 448"/>
+            <path class="infiltration-arrow" d="M314 344 C292 376 282 400 282 430"/>
+            <path class="system-arrow" d="M418 448 C496 478 608 462 742 430"/>
+            <g opacity="0.94">
+              <rect x="674" y="206" width="26" height="70" fill="#d9c6a1"/>
+              <rect x="706" y="184" width="32" height="92" fill="#b9c7c8"/>
+              <rect x="744" y="218" width="28" height="58" fill="#ead29c"/>
+              <path d="M660 276 L796 276" stroke="rgba(246,251,248,0.55)" stroke-width="4"/>
+            </g>
+            <g>
+              <path class="wetland-plant" d="M318 338 C310 316 306 296 318 276"/>
+              <path class="wetland-plant" d="M344 346 C336 320 340 300 354 282"/>
+              <path class="wetland-plant" d="M378 342 C370 316 372 296 390 276"/>
+              <path class="wetland-plant" d="M496 334 C486 312 488 292 506 272"/>
+              <path class="wetland-plant" d="M528 336 C520 312 526 294 542 278"/>
+            </g>
+            <g>
+              <path d="M118 288 C90 260 94 222 132 208 C164 230 166 266 118 288Z" fill="rgba(119,200,109,0.82)"/>
+              <path d="M586 252 C552 224 560 182 602 168 C640 198 632 236 586 252Z" fill="rgba(119,200,109,0.8)"/>
+              <path d="M804 280 C772 250 782 210 824 198 C856 228 846 264 804 280Z" fill="rgba(119,200,109,0.72)"/>
+            </g>
+          </svg>
+          <div class="process-callout c-capture"><em>1</em><strong>Capture</strong><p>plants and soil intercept rainfall before it becomes runoff.</p></div>
+          <div class="process-callout c-slow"><em>2</em><strong>Slow</strong><p>swales, buffers and meanders reduce peak flow and erosion.</p></div>
+          <div class="process-callout c-filter"><em>3</em><strong>Filter</strong><p>wetland roots, microbes and sediments remove pollutants.</p></div>
+          <div class="process-callout c-store"><em>4</em><strong>Store</strong><p>ponds and floodplains hold water for dry periods.</p></div>
+          <div class="process-callout c-recharge"><em>5</em><strong>Recharge</strong><p>cleaner water infiltrates to aquifers and sustains baseflow.</p></div>
+          <div class="outcome-strip">
+            <div class="outcome"><strong>Less flood peak</strong>water reaches channels more slowly</div>
+            <div class="outcome"><strong>Better quality</strong>nutrients and sediment are trapped</div>
+            <div class="outcome"><strong>More reserve</strong>soil and aquifer storage support droughts</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Watershed scale">
+      <div class="content">
+        <div class="kicker reveal">4. Where solutions operate</div>
+        <h2 class="slide-title reveal" style="--delay: 80ms">A watershed works as a connected system.</h2>
+        <p class="slide-subtitle reveal" style="--delay: 180ms">The same storm can become a flash flood, a stored reserve, or clean baseflow depending on the landscape it meets.</p>
+        <div class="image-frame contain overlay-map reveal" style="--delay: 260ms">
+          <img src="assets/nbs-system-map.jpg" alt="Nature-based solutions across a landscape from mountains to city.">
+          <div class="overlay-chip chip-catchment"><strong>Catchment slopes</strong>revegetation and soil cover reduce runoff and erosion.</div>
+          <div class="overlay-chip chip-river"><strong>Rivers and wetlands</strong>meanders, buffers, and flood expansion areas slow flow.</div>
+          <div class="overlay-chip chip-farm"><strong>Food landscapes</strong>cover crops, low-water crops, and soil amendments reduce irrigation pressure.</div>
+          <div class="overlay-chip chip-city"><strong>Urban areas</strong>green roofs, swales, rain gardens, and retention basins manage stormwater.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Olon River case">
+      <div class="content">
+        <div class="kicker reveal">5. Example: stream restoration</div>
+        <h2 class="slide-title reveal" style="--delay: 80ms">Re-meandering turns drainage into storage.</h2>
+        <p class="slide-subtitle reveal" style="--delay: 180ms">The Olon River example shows a degraded channel restored with meanders. The goal is not simply to make the river "natural looking"; it is to slow water, reconnect river-aquifer exchange, improve habitat, and reduce flood impacts.</p>
+        <div class="triptych">
+          <div class="image-frame reveal" style="--delay: 260ms">
+            <img src="assets/olon-2021.jpg" alt="Olon River restoration site in 2021.">
+            <span class="timeline-label">2021</span>
+            <div class="caption">Initial condition: simplified flow path and limited floodplain function.</div>
+          </div>
+          <div class="image-frame reveal" style="--delay: 360ms">
+            <img src="assets/olon-2022.jpg" alt="Olon River restoration site in 2022 after meanders were shaped.">
+            <span class="timeline-label">2022</span>
+            <div class="caption">Meanders rebuilt: longer path, lower velocity, more bank interaction.</div>
+          </div>
+          <div class="image-frame reveal" style="--delay: 460ms">
+            <img src="assets/olon-2023.jpg" alt="Olon River restoration site in 2023 with vegetation regrowth.">
+            <span class="timeline-label">2023</span>
+            <div class="caption">Vegetation returns: roughness, filtration, habitat, and cooling increase.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="2050 risks">
+      <div class="content">
+        <div class="kicker reveal">6. The risk landscape by 2050</div>
+        <h2 class="slide-title reveal" style="--delay: 80ms">Climate change makes water risk systemic.</h2>
+        <p class="slide-subtitle reveal" style="--delay: 180ms">The TNC and IIASA report links water, food, and biodiversity risks under future climate scenarios. These numbers give the urgency behind scaling NbS.</p>
+        <div class="risk-grid">
+          <div class="stat-card risk-card reveal" style="--delay: 260ms">
+            <div class="radial" style="--value:25; --color: var(--gold)" data-label="25%"></div>
+            <h3>Drought frequency</h3>
+            <p>25% of global land area is projected to see drought frequency increase by over 70%.</p>
+          </div>
+          <div class="stat-card risk-card reveal" style="--delay: 340ms">
+            <div class="radial" style="--value:36; --color: var(--water)" data-label="36%"></div>
+            <h3>Surface water stress</h3>
+            <p>36% of land will experience surface water stress; 86% of that stressed area is severe.</p>
+          </div>
+          <div class="stat-card risk-card reveal" style="--delay: 420ms">
+            <div class="radial" style="--value:30; --color: var(--clay)" data-label="+30%"></div>
+            <h3>Groundwater stress</h3>
+            <p>Global groundwater stress is expected to increase 30% by 2050.</p>
+          </div>
+          <div class="stat-card risk-card reveal" style="--delay: 500ms">
+            <div class="radial" style="--value:40; --color: var(--berry)" data-label="40%"></div>
+            <h3>Nutrient pollution</h3>
+            <p>Up to 40% of Earth's surface may exceed nitrogen and phosphorus ecological thresholds.</p>
+          </div>
+          <div class="stat-card risk-card reveal" style="--delay: 580ms">
+            <div class="radial" style="--value:64; --color: var(--leaf)" data-label="64%"></div>
+            <h3>Biodiversity hotspots</h3>
+            <p>64% of freshwater biodiversity hotspots are at risk of water stress, mostly outside protected areas.</p>
+          </div>
+          <div class="stat-card risk-card reveal" style="--delay: 660ms">
+            <div class="radial" style="--value:25; --color: var(--water-2)" data-label="25%"></div>
+            <h3>Crop nutrients</h3>
+            <p>Up to 25% of global crop nutrient production may be at risk, including zinc, iron, and vitamin A.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Food-water nexus" style="--photo: url('assets/meander-farms.jpg')">
+      <div class="photo-bg" aria-hidden="true"></div>
+      <div class="content grid-2">
+        <div>
+          <div class="kicker reveal">7. Agriculture as the central water user</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">Food security and water security are the same conversation.</h2>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">Irrigation is productive, but it concentrates water risk. Efficient use requires soil-water conservation on farms and landscape measures that keep rivers and aquifers functioning.</p>
+        </div>
+        <div class="panel reveal" style="--delay: 260ms">
+          <h3>Land, water, and food production</h3>
+          <div class="bar-chart">
+            <div class="bar-row">
+              <span>Rainfed land</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 80%"></div></div>
+              <strong>80%</strong>
+            </div>
+            <div class="bar-row">
+              <span>Rainfed crops</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 60%"></div></div>
+              <strong>60%</strong>
+            </div>
+            <div class="bar-row">
+              <span>Irrigated land</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 20%"></div></div>
+              <strong>20%</strong>
+            </div>
+            <div class="bar-row">
+              <span>Irrigated food</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 40%"></div></div>
+              <strong>40%</strong>
+            </div>
+          </div>
+          <ul class="list">
+            <li>Rainfed agriculture covers 80% of cultivated land and produces about 60% of crops.</li>
+            <li>Irrigated agriculture covers 20% of cultivated land but produces about 40% of global food.</li>
+            <li>Projected 1998-2030 gains: 36% more food with 13% more agricultural water.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Archetypes">
+      <div class="content">
+        <div class="kicker reveal">8. Four landscape archetypes</div>
+        <h2 class="slide-title reveal" style="--delay: 80ms">Match the solution to the water risk.</h2>
+        <p class="slide-subtitle reveal" style="--delay: 180ms">The archetype approach groups landscapes by water threat and production system, then links them to repeatable NbS and enabling conditions.</p>
+        <div class="archetype-grid">
+          <div class="archetype reveal" style="--delay: 260ms; --tag: var(--gold)">
+            <span class="tag">Surface water stress</span>
+            <h3>Mixed production agriculture</h3>
+            <p>Seasonal low flows, drought, and competing urban-agricultural demand.</p>
+            <ul class="mini-list">
+              <li>Low water-use crops</li>
+              <li>Irrigation efficiency</li>
+              <li>Riparian buffers</li>
+              <li>River-floodplain reconnection</li>
+            </ul>
+          </div>
+          <div class="archetype reveal" style="--delay: 340ms; --tag: var(--water)">
+            <span class="tag">Groundwater stress</span>
+            <h3>Irrigated systems</h3>
+            <p>Aquifer depletion in intensive food-production regions.</p>
+            <ul class="mini-list">
+              <li>Crop diversification</li>
+              <li>Ground cover</li>
+              <li>Managed aquifer recharge</li>
+              <li>Wetland restoration</li>
+            </ul>
+          </div>
+          <div class="archetype reveal" style="--delay: 420ms; --tag: var(--leaf)">
+            <span class="tag">Water quality</span>
+            <h3>Intensive agriculture</h3>
+            <p>Nitrogen, phosphorus, sediment, and agrochemical runoff.</p>
+            <ul class="mini-list">
+              <li>Precision nutrient management</li>
+              <li>Continuous ground cover</li>
+              <li>Filter strips and wetlands</li>
+              <li>Bivalve restoration</li>
+            </ul>
+          </div>
+          <div class="archetype reveal" style="--delay: 500ms; --tag: var(--clay)">
+            <span class="tag">Flooding</span>
+            <h3>Diverse agriculture systems</h3>
+            <p>Flood-prone croplands where floodplains also support habitat.</p>
+            <ul class="mini-list">
+              <li>Floodplain reconnection</li>
+              <li>Riparian buffers</li>
+              <li>Agroforestry</li>
+              <li>Reservoir and lake management</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Quantity solutions">
+      <div class="content">
+        <div class="kicker reveal">9. NbS for water quantity</div>
+        <h2 class="slide-title reveal" style="--delay: 80ms">Drought and depletion are managed from farm to basin.</h2>
+        <div class="solution-layout">
+          <div class="photo-strip reveal" style="--delay: 160ms">
+            <div class="image-frame">
+              <img src="assets/meander-farms.jpg" alt="Aerial view of meandering river through agricultural fields.">
+              <div class="caption">Meanders and floodplains slow water and increase exchange with soils and aquifers.</div>
+            </div>
+            <div class="image-frame">
+              <img src="assets/hybrid-infrastructure.jpg" alt="Water control infrastructure next to vegetated wetlands and farmland.">
+              <div class="caption">Hybrid systems combine built control with natural storage and habitat.</div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="solution-card reveal" style="--delay: 260ms">
+              <h3>On-farm practices</h3>
+              <p>Reduce irrigation demand and improve soil storage.</p>
+              <ul class="mini-list">
+                <li>Low water-use crops and crop diversification</li>
+                <li>Mulching, biochar, cover crops, and residue management</li>
+                <li>Reduced or no tillage</li>
+                <li>Drip, deficit, and alternate wet-dry irrigation</li>
+                <li>Rotational grazing and grassland restoration</li>
+              </ul>
+            </div>
+            <div class="solution-card reveal" style="--delay: 360ms">
+              <h3>Landscape practices</h3>
+              <p>Recharge water bodies and sustain baseflow.</p>
+              <ul class="mini-list">
+                <li>Wetland protection and restoration</li>
+                <li>Riparian buffers and buffer strips</li>
+                <li>Reconnecting rivers to floodplains</li>
+                <li>Natural water retention and recharge</li>
+                <li>Managed aquifer recharge</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Quality solutions">
+      <div class="content grid-2">
+        <div>
+          <div class="kicker reveal">10. NbS for water quality</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">The cheapest pollutant to treat is the one that never reaches the river.</h2>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">Nutrient and sediment pollution rises when soil is exposed, fertilizer is mistimed, and runoff moves too quickly. NbS creates physical and biological filters across the system.</p>
+          <ul class="list">
+            <li class="reveal" style="--delay: 280ms">On farms: precision nutrient management, cover crops, intercropping, reduced tillage.</li>
+            <li class="reveal" style="--delay: 360ms">Across landscapes: filter strips, two-stage ditches, riparian buffers, wetlands, floodplain restoration.</li>
+            <li class="reveal" style="--delay: 440ms">In water bodies: bivalve restoration and submerged aquatic vegetation.</li>
+          </ul>
+        </div>
+        <div class="panel reveal" style="--delay: 260ms">
+          <h3>Chesapeake Bay example</h3>
+          <p>A reported suite of on-farm practices reduced runoff of nitrogen, phosphorus, and sediment, while restored hectares retain additional pollutants before they enter the Bay.</p>
+          <div class="quality-graph">
+            <div class="bar-row">
+              <span>N runoff reduction</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 15.3%"></div></div>
+              <strong>15.3%</strong>
+            </div>
+            <div class="bar-row">
+              <span>P runoff reduction</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 21.3%"></div></div>
+              <strong>21.3%</strong>
+            </div>
+            <div class="bar-row">
+              <span>Sediment reduction</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 7.6%"></div></div>
+              <strong>7.6%</strong>
+            </div>
+            <div class="bar-row">
+              <span>Restored hectare N retained</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 42%"></div></div>
+              <strong>42%</strong>
+            </div>
+            <div class="bar-row">
+              <span>Restored hectare P retained</span>
+              <div class="bar-track"><div class="bar-fill" style="--w: 40%"></div></div>
+              <strong>40%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Flooding solutions" style="--photo: url('assets/floodplain-riparian.jpg')">
+      <div class="photo-bg" aria-hidden="true"></div>
+      <div class="content grid-2">
+        <div>
+          <div class="kicker reveal">11. NbS for flood risk</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">Floodplains are storage, habitat, and insurance.</h2>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">Floodplain reconnection creates room for water during peak events, reduces downstream pressure, and supports biodiversity. It is especially powerful when designed with agriculture rather than against it.</p>
+        </div>
+        <div class="panel reveal" style="--delay: 260ms">
+          <div class="big-number">24%</div>
+          <h3>of global croplands are in flood-prone areas</h3>
+          <ul class="list">
+            <li>Floodplains regulate flow and recharge groundwater.</li>
+            <li>Riparian buffers reduce erosion and create habitat corridors.</li>
+            <li>Agroforestry and continuous ground cover increase roughness and soil stability.</li>
+            <li>Reservoir and lake operations can be aligned with floodplain restoration.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Urban solutions">
+      <div class="content">
+        <div class="kicker reveal">12. Urban water management</div>
+        <h2 class="slide-title reveal" style="--delay: 80ms">Cities can shift from drainage to sponge behavior.</h2>
+        <p class="slide-subtitle reveal" style="--delay: 180ms">In urban areas, NbS manages rainfall through retention, infiltration, evapotranspiration, treatment, and reuse. This can reduce the size and cost of collection networks and wastewater treatment needs.</p>
+        <div class="urban-grid">
+          <div class="mechanism reveal" style="--delay: 260ms; --icon: var(--water)">
+            <div class="icon">1</div>
+            <h3>Vegetated swales</h3>
+            <p>Move stormwater slowly while filtering sediments and pollutants.</p>
+          </div>
+          <div class="mechanism reveal" style="--delay: 330ms; --icon: var(--leaf)">
+            <div class="icon">2</div>
+            <h3>Rain gardens</h3>
+            <p>Turn local runoff into infiltration and plant-supported treatment.</p>
+          </div>
+          <div class="mechanism reveal" style="--delay: 400ms; --icon: var(--gold)">
+            <div class="icon">3</div>
+            <h3>Retention ponds</h3>
+            <p>Hold peak flows during storms and release water slowly.</p>
+          </div>
+          <div class="mechanism reveal" style="--delay: 470ms; --icon: var(--clay)">
+            <div class="icon">4</div>
+            <h3>Green roofs</h3>
+            <p>Evapotranspire rainfall and improve thermal performance.</p>
+          </div>
+          <div class="mechanism reveal" style="--delay: 540ms; --icon: var(--berry)">
+            <div class="icon">5</div>
+            <h3>Constructed wetlands</h3>
+            <p>Use plants, sediments, and bacteria for complementary treatment.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Governance">
+      <div class="content grid-2">
+        <div>
+          <div class="kicker reveal">13. Governance is part of the solution</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">NbS fails when treated as a one-time construction project.</h2>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">Living infrastructure changes over time. It needs planning, monitoring, consultation, maintenance, and adaptive management.</p>
+          <div class="triad">
+            <div class="panel reveal" style="--delay: 280ms">
+              <h3>Planning</h3>
+              <p>Coherent actions, optimized allocation, long-term vision.</p>
+            </div>
+            <div class="panel reveal" style="--delay: 360ms">
+              <h3>Monitoring</h3>
+              <p>Ecological indicators, water-quality data, public reporting.</p>
+            </div>
+            <div class="panel reveal" style="--delay: 440ms">
+              <h3>Consultation</h3>
+              <p>Workshops, local knowledge, shared governance, legitimacy.</p>
+            </div>
+          </div>
+        </div>
+        <div class="image-frame contain governance-img reveal" style="--delay: 260ms">
+          <img src="assets/governance-triad.jpg" alt="Diagram showing planning, monitoring, and consultation as dimensions of nature-based solutions.">
+          <div class="caption">Three dimensions that make NbS effective, sustainable, and socially accepted.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Implementation">
+      <div class="content">
+        <div class="kicker reveal">14. Implementation roadmap</div>
+        <h2 class="slide-title reveal" style="--delay: 80ms">From isolated projects to a water-resilient landscape.</h2>
+        <p class="slide-subtitle reveal" style="--delay: 180ms">A practical NbS program should move through diagnosis, co-design, financing, implementation, and adaptive management.</p>
+        <div class="roadmap">
+          <div class="step reveal" data-step="1" style="--delay: 260ms; --step-color: var(--water)">
+            <h3>Diagnose the watershed</h3>
+            <p>Map risks: drought, surface water stress, groundwater depletion, pollution, and flood exposure.</p>
+          </div>
+          <div class="step reveal" data-step="2" style="--delay: 340ms; --step-color: var(--leaf)">
+            <h3>Choose the archetype</h3>
+            <p>Match NbS to the dominant water challenge and production system.</p>
+          </div>
+          <div class="step reveal" data-step="3" style="--delay: 420ms; --step-color: var(--gold)">
+            <h3>Co-design locally</h3>
+            <p>Bring farmers, utilities, municipalities, communities, engineers, and ecologists together.</p>
+          </div>
+          <div class="step reveal" data-step="4" style="--delay: 500ms; --step-color: var(--clay)">
+            <h3>Blend finance</h3>
+            <p>Use public incentives, grants, water funds, ecosystem-service payments, and risk-reduction funding.</p>
+          </div>
+          <div class="step reveal" data-step="5" style="--delay: 580ms; --step-color: var(--berry)">
+            <h3>Monitor and adapt</h3>
+            <p>Track water quantity, water quality, biodiversity, maintenance needs, social acceptance, and costs.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Limits and hybrid design" style="--photo: url('assets/hybrid-infrastructure.jpg')">
+      <div class="photo-bg" aria-hidden="true"></div>
+      <div class="content grid-2">
+        <div>
+          <div class="kicker reveal">15. Limits and design cautions</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">NbS is powerful, but not magic.</h2>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">The sources repeatedly stress that NbS is context-dependent and must often be combined with grey infrastructure, rules, maintenance, and monitoring.</p>
+        </div>
+        <div class="panel reveal" style="--delay: 260ms">
+          <h3>Questions every project should answer</h3>
+          <ul class="list">
+            <li>What events can it handle: normal storms, drought, extreme rainfall, or all of these?</li>
+            <li>What is the right scale: street, farm, city, aquifer, watershed, or basin?</li>
+            <li>Who maintains living systems as vegetation, soils, pests, and climate change over time?</li>
+            <li>How are tradeoffs handled between water use, biodiversity, agriculture, property, and equity?</li>
+            <li>Which grey infrastructure remains necessary for safety and reliability?</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Conclusion">
+      <div class="content takeaway">
+        <div class="formula reveal" style="--delay: 120ms">
+          <h2>Efficient water use</h2>
+          <div class="formula-row">
+            <span class="formula-pill">reduce demand</span>
+            <span>+</span>
+            <span class="formula-pill">slow runoff</span>
+            <span>+</span>
+            <span class="formula-pill">store water</span>
+            <span>+</span>
+            <span class="formula-pill">filter pollution</span>
+            <span>+</span>
+            <span class="formula-pill">recharge aquifers</span>
+            <span>+</span>
+            <span class="formula-pill">govern fairly</span>
+          </div>
+        </div>
+        <div>
+          <div class="kicker reveal">16. Final message</div>
+          <h2 class="slide-title reveal" style="--delay: 80ms">Design with the water cycle, not against it.</h2>
+          <ul class="list">
+            <li class="reveal" style="--delay: 240ms">NbS makes water efficiency spatial: the watershed becomes the unit of design.</li>
+            <li class="reveal" style="--delay: 320ms">The best projects deliver multiple benefits at once: supply security, risk reduction, quality improvement, biodiversity, and social value.</li>
+            <li class="reveal" style="--delay: 400ms">Scaling NbS depends on enabling conditions: policy, finance, evidence, monitoring, and inclusive collaboration.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Sources">
+      <div class="content">
+        <div class="kicker reveal">Sources used</div>
+        <h2 class="slide-title reveal" style="--delay: 80ms">Presentation bibliography</h2>
+        <ul class="sources-list">
+          <li class="reveal" style="--delay: 180ms"><strong>Rey, F. et al. (2026).</strong> "Nature-based solutions for water management: Pluridisciplinary state-of-the-art and research needs." <em>Ecological Engineering</em> 225, 107887. DOI: 10.1016/j.ecoleng.2025.107887.</li>
+          <li class="reveal" style="--delay: 260ms"><strong>Atwood, L. et al. (2025).</strong> <em>Archetypes for Nature-Based Adaptation: Aligning Nature-Based Solutions and Enabling Conditions to Address Water Risk in Food Producing Landscapes.</em> The Nature Conservancy and International Institute for Applied Systems Analysis.</li>
+          <li class="reveal" style="--delay: 340ms"><strong>United Nations World Water Development Report 3.</strong> <em>Water in a Changing World - Facts and Figures.</em> Used for global water demand, investment, agriculture, and demographic context.</li>
+          <li class="reveal" style="--delay: 420ms"><strong>Provided figures and photos.</strong> NbS system map, Olon River restoration sequence, governance triad, agricultural landscapes, floodplain image, terraced water landscape, and hybrid water infrastructure image.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <nav class="controls" aria-label="Slide controls">
+    <button type="button" id="prev" aria-label="Previous slide">&lt;</button>
+    <span class="count" id="count">1 / 18</span>
+    <button type="button" id="next" aria-label="Next slide">&gt;</button>
+    <button type="button" id="full" aria-label="Toggle fullscreen">[]</button>
+  </nav>
+  <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const prevButton = document.getElementById("prev");
+    const nextButton = document.getElementById("next");
+    const fullButton = document.getElementById("full");
+    const count = document.getElementById("count");
+    const progress = document.getElementById("progress");
+    const canvas = document.getElementById("motionCanvas");
+    const ctx = canvas.getContext("2d", { alpha: true });
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const motionState = {
+      width: 0,
+      height: 0,
+      dpr: 1,
+      time: 0,
+      paletteIndex: 0,
+      mouse: { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false },
+      particles: [],
+      ripples: [],
+      palettes: [
+        ["#53d5e5", "#77c86d", "#f6c86f"],
+        ["#62e1f3", "#88d58b", "#e67f5f"],
+        ["#35b8c6", "#bde37b", "#f6c86f"],
+        ["#8ee6f2", "#54c176", "#b36a9f"]
+      ]
+    };
+    let index = 0;
+
+    function resizeMotionCanvas() {
+      motionState.dpr = Math.min(window.devicePixelRatio || 1, 2);
+      motionState.width = window.innerWidth;
+      motionState.height = window.innerHeight;
+      canvas.width = Math.floor(motionState.width * motionState.dpr);
+      canvas.height = Math.floor(motionState.height * motionState.dpr);
+      canvas.style.width = `${motionState.width}px`;
+      canvas.style.height = `${motionState.height}px`;
+      ctx.setTransform(motionState.dpr, 0, 0, motionState.dpr, 0, 0);
+      seedParticles();
+    }
+
+    function seedParticles() {
+      const countParticles = Math.min(120, Math.max(62, Math.floor(motionState.width / 13)));
+      motionState.particles = Array.from({ length: countParticles }, (_, i) => ({
+        x: Math.random() * motionState.width,
+        y: Math.random() * motionState.height,
+        baseY: Math.random() * motionState.height,
+        speed: 0.18 + Math.random() * 0.72,
+        size: 0.8 + Math.random() * 2.8,
+        phase: Math.random() * Math.PI * 2,
+        type: i % 7 === 0 ? "leaf" : "drop",
+        alpha: 0.14 + Math.random() * 0.38
+      }));
+    }
+
+    function addRipple(x, y, strength = 0.24) {
+      if (reduceMotion) return;
+      motionState.ripples.push({ x, y, r: 8, a: strength, w: 1.4 + strength * 6 });
+      if (motionState.ripples.length > 18) motionState.ripples.shift();
+    }
+
+    function drawMotionFrame() {
+      if (reduceMotion) return;
+      const { width, height, mouse, particles, palettes } = motionState;
+      const palette = palettes[motionState.paletteIndex % palettes.length];
+      motionState.time += 0.009;
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "lighter";
+
+      for (let lane = 0; lane < 6; lane++) {
+        const yBase = height * (0.14 + lane * 0.145);
+        ctx.beginPath();
+        for (let x = -60; x <= width + 60; x += 26) {
+          const y = yBase + Math.sin(x * 0.008 + motionState.time * (1.4 + lane * 0.12) + lane) * (16 + lane * 2);
+          if (x === -60) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = lane % 2 ? "rgba(119, 200, 109, 0.075)" : "rgba(83, 213, 229, 0.105)";
+        ctx.lineWidth = 1.1 + (lane % 3) * 0.45;
+        ctx.setLineDash([12, 28]);
+        ctx.lineDashOffset = -motionState.time * 90 * (lane + 1);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      for (const p of particles) {
+        const influenceX = (mouse.x - p.x) * 0.0009;
+        const influenceY = (mouse.y - p.y) * 0.00045;
+        p.phase += 0.013 + p.speed * 0.006;
+        p.x += p.speed + influenceX;
+        p.baseY += influenceY;
+        p.y = p.baseY + Math.sin(p.phase) * (12 + p.size * 5);
+        if (p.x > width + 28) p.x = -28;
+        if (p.x < -34) p.x = width + 26;
+        if (p.baseY > height + 30) p.baseY = -30;
+        if (p.baseY < -35) p.baseY = height + 30;
+
+        if (p.type === "leaf") {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(Math.sin(p.phase) * 0.9);
+          ctx.fillStyle = `rgba(119, 200, 109, ${p.alpha})`;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, p.size * 2.4, p.size * 0.92, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        } else {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(Math.sin(p.phase) * 0.25);
+          ctx.fillStyle = `rgba(83, 213, 229, ${p.alpha * 0.8})`;
+          ctx.beginPath();
+          ctx.moveTo(0, -p.size * 3.6);
+          ctx.quadraticCurveTo(p.size * 1.7, -p.size * 0.3, 0, p.size * 3.8);
+          ctx.quadraticCurveTo(-p.size * 1.7, -p.size * 0.3, 0, -p.size * 3.6);
+          ctx.fill();
+          ctx.strokeStyle = `rgba(246, 200, 111, ${p.alpha * 0.2})`;
+          ctx.lineWidth = 0.55;
+          ctx.beginPath();
+          ctx.moveTo(-p.size * 9, 0);
+          ctx.quadraticCurveTo(0, Math.sin(p.phase) * 4, p.size * 9, 0);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      motionState.ripples = motionState.ripples.filter((r) => r.a > 0.01 && r.r < Math.max(width, height) * 0.5);
+      for (const r of motionState.ripples) {
+        ctx.strokeStyle = `rgba(83, 213, 229, ${r.a})`;
+        ctx.lineWidth = r.w;
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(119, 200, 109, ${r.a * 0.45})`;
+        ctx.lineWidth = Math.max(0.7, r.w * 0.45);
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.r * 0.62, 0, Math.PI * 2);
+        ctx.stroke();
+        r.r += 2.4;
+        r.a *= 0.94;
+      }
+
+      requestAnimationFrame(drawMotionFrame);
+    }
+
+    function setMousePosition(x, y) {
+      motionState.mouse.x = x;
+      motionState.mouse.y = y;
+      root.style.setProperty("--mx", `${x}px`);
+      root.style.setProperty("--my", `${y}px`);
+    }
+
+    let lastRippleAt = 0;
+    window.addEventListener("pointermove", (event) => {
+      setMousePosition(event.clientX, event.clientY);
+      const now = performance.now();
+      if (now - lastRippleAt > 95) {
+        addRipple(event.clientX, event.clientY, 0.11);
+        lastRippleAt = now;
+      }
+    }, { passive: true });
+
+    window.addEventListener("pointerdown", (event) => {
+      setMousePosition(event.clientX, event.clientY);
+      addRipple(event.clientX, event.clientY, 0.32);
+    }, { passive: true });
+
+    document.querySelectorAll(".image-frame").forEach((frame) => {
+      frame.addEventListener("pointermove", (event) => {
+        const rect = frame.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        frame.style.setProperty("--tilt-y", `${x * 5}deg`);
+        frame.style.setProperty("--tilt-x", `${y * -5}deg`);
+      }, { passive: true });
+      frame.addEventListener("pointerleave", () => {
+        frame.style.setProperty("--tilt-x", "0deg");
+        frame.style.setProperty("--tilt-y", "0deg");
+      });
+    });
+
+    window.addEventListener("resize", resizeMotionCanvas);
+    resizeMotionCanvas();
+    if (!reduceMotion) requestAnimationFrame(drawMotionFrame);
+
+    function updateSlides(target) {
+      index = (target + slides.length) % slides.length;
+      motionState.paletteIndex = index;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === index);
+        slide.classList.toggle("previous", i < index);
+        slide.setAttribute("aria-hidden", i === index ? "false" : "true");
+      });
+      count.textContent = `${index + 1} / ${slides.length}`;
+      progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+      document.title = `${slides[index].dataset.title} - Nature-Based Solutions`;
+      addRipple(window.innerWidth * 0.5, window.innerHeight * 0.82, 0.18);
+    }
+
+    prevButton.addEventListener("click", () => updateSlides(index - 1));
+    nextButton.addEventListener("click", () => updateSlides(index + 1));
+    fullButton.addEventListener("click", async () => {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+        event.preventDefault();
+        updateSlides(index + 1);
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        updateSlides(index - 1);
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        updateSlides(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        updateSlides(slides.length - 1);
+      }
+      if (event.key.toLowerCase() === "f") {
+        fullButton.click();
+      }
+    });
+
+    let touchStartX = null;
+    window.addEventListener("touchstart", (event) => {
+      touchStartX = event.changedTouches[0].clientX;
+    }, { passive: true });
+
+    window.addEventListener("touchend", (event) => {
+      if (touchStartX === null) return;
+      const delta = event.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(delta) > 60) {
+        updateSlides(index + (delta < 0 ? 1 : -1));
+      }
+      touchStartX = null;
+    }, { passive: true });
+
+    updateSlides(0);
+  </script>
+</body>
+</html>
