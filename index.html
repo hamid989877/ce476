@@ -184,11 +184,14 @@
     }
 
     .slide-title {
+      --title-size: 3.8rem;
       margin: 0;
-      font-size: 3.8rem;
+      max-width: 100%;
+      font-size: var(--fit-title-size, var(--title-size));
       line-height: 1.02;
       letter-spacing: 0;
       font-weight: 850;
+      white-space: nowrap;
     }
 
     .slide-subtitle {
@@ -255,9 +258,10 @@
     }
 
     .hero h1 {
+      --title-size: clamp(1.35rem, 2.95vw, 2.5rem);
       max-width: none;
       margin: 0;
-      font-size: clamp(1.35rem, 2.95vw, 2.5rem);
+      font-size: var(--fit-title-size, var(--title-size));
       line-height: 1;
       letter-spacing: 0;
       font-weight: 900;
@@ -1322,7 +1326,7 @@
 
       .slide-title,
       .hero h1:not(.hero-title) {
-        font-size: 3rem;
+        --title-size: 3rem;
       }
 
       .grid-2,
@@ -1370,7 +1374,7 @@
 
       .slide-title,
       .hero h1:not(.hero-title) {
-        font-size: 2.25rem;
+        --title-size: 2.25rem;
       }
 
       .slide-subtitle,
@@ -1554,7 +1558,7 @@
           <ul class="list">
             <li class="reveal" style="--delay: 260ms">Global water withdrawals tripled over the last 50 years.</li>
             <li class="reveal" style="--delay: 340ms">Population growth adds about 64 billion m<sup>3</sup> of freshwater demand each year.</li>
-            <li class="reveal" style="--delay: 420ms">By 2030, 47% of the world population is projected to live in high water-stress areas.</li>
+            <li class="reveal" style="--delay: 420ms">By 2030, 47% of the world population is projected to live in high water stress areas.</li>
           </ul>
         </div>
         <div class="panel reveal" style="--delay: 260ms">
@@ -1592,18 +1596,18 @@
     <section class="slide" data-title="Definition">
       <div class="content grid-2">
         <div class="image-frame contain reveal" style="--delay: 120ms">
-          <img src="assets/nbs-system-map.jpg" alt="Illustrated landscape showing examples of nature-based solutions for water management.">
-          <div class="caption">NbS connect catchment slopes, rivers, farms, wetlands, and cities into one water-management system.</div>
+          <img src="assets/nbs-system-map.jpg" alt="Illustrated landscape showing examples of nature based solutions for water management.">
+          <div class="caption">NbS connect catchment slopes, rivers, farms, wetlands, and cities into one water management system.</div>
         </div>
         <div>
           <div class="kicker reveal">2. What counts as NbS?</div>
           <h2 class="slide-title reveal" style="--delay: 80ms">Nature is not decoration. It is infrastructure.</h2>
-          <p class="slide-subtitle reveal" style="--delay: 180ms">Rey et al. define Nature-Based Solutions as actions that protect, sustainably manage, and restore ecosystems while responding to societal challenges and conserving biodiversity.</p>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">Rey et al. define Nature Based Solutions as actions that protect, sustainably manage, and restore ecosystems while responding to societal challenges and conserving biodiversity.</p>
           <ul class="list">
             <li class="reveal" style="--delay: 280ms">Water quantity: recharge aquifers, retain stormwater, sustain stream flow.</li>
             <li class="reveal" style="--delay: 360ms">Water quality: filter sediments, nutrients, metals, hydrocarbons, and pesticides.</li>
             <li class="reveal" style="--delay: 440ms">Risk reduction: lower flood peaks, drought impacts, erosion, and heat stress.</li>
-            <li class="reveal" style="--delay: 520ms">Co-benefits: habitat, cooling, recreation, landscape quality, and public health.</li>
+            <li class="reveal" style="--delay: 520ms">Co benefits: habitat, cooling, recreation, landscape quality, and public health.</li>
           </ul>
         </div>
       </div>
@@ -1616,7 +1620,7 @@
           <h2 class="slide-title reveal" style="--delay: 80ms">Efficiency means more useful water, not just less water.</h2>
           <p class="slide-subtitle reveal" style="--delay: 180ms">The most important move is to change the pathway of rain: from fast runoff and polluted discharge to slow storage, infiltration, filtration, and reuse.</p>
           <ul class="list">
-            <li class="reveal" style="--delay: 280ms">Vegetation and roots increase infiltration and soil water-holding capacity.</li>
+            <li class="reveal" style="--delay: 280ms">Vegetation and roots increase infiltration and soil water holding capacity.</li>
             <li class="reveal" style="--delay: 360ms">Wetlands, swales, ponds, and floodplains delay peak flows.</li>
             <li class="reveal" style="--delay: 440ms">Soil, plants, microbes, and sediments treat water before it reaches rivers.</li>
             <li class="reveal" style="--delay: 520ms">Recharge areas keep groundwater available during dry periods.</li>
@@ -1624,7 +1628,7 @@
         </div>
         <div class="mechanism-map reveal" style="--delay: 220ms">
           <div class="diagram-title">One storm, five useful pathways<span>Nature changes fast runoff into stored, cleaner, reusable water.</span></div>
-          <svg class="water-system-svg" viewBox="0 0 860 540" role="img" aria-label="Nature-based water system diagram showing rainfall, slowed runoff, wetland filtration, water storage, aquifer recharge, and supported stream flow.">
+          <svg class="water-system-svg" viewBox="0 0 860 540" role="img" aria-label="Nature based water system diagram showing rainfall, slowed runoff, wetland filtration, water storage, aquifer recharge, and supported stream flow.">
             <defs>
               <linearGradient id="mechanismSky" x1="0" x2="0" y1="0" y2="1">
                 <stop offset="0" stop-color="#0d4960"/>
@@ -1699,10 +1703,10 @@
         <h2 class="slide-title reveal" style="--delay: 80ms">A watershed works as a connected system.</h2>
         <p class="slide-subtitle reveal" style="--delay: 180ms">The same storm can become a flash flood, a stored reserve, or clean baseflow depending on the landscape it meets.</p>
         <div class="image-frame contain overlay-map reveal" style="--delay: 260ms">
-          <img src="assets/nbs-system-map.jpg" alt="Nature-based solutions across a landscape from mountains to city.">
+          <img src="assets/nbs-system-map.jpg" alt="Nature based solutions across a landscape from mountains to city.">
           <div class="overlay-chip chip-catchment"><strong>Catchment slopes</strong>revegetation and soil cover reduce runoff and erosion.</div>
           <div class="overlay-chip chip-river"><strong>Rivers and wetlands</strong>meanders, buffers, and flood expansion areas slow flow.</div>
-          <div class="overlay-chip chip-farm"><strong>Food landscapes</strong>cover crops, low-water crops, and soil amendments reduce irrigation pressure.</div>
+          <div class="overlay-chip chip-farm"><strong>Food landscapes</strong>cover crops, low water crops, and soil amendments reduce irrigation pressure.</div>
           <div class="overlay-chip chip-city"><strong>Urban areas</strong>green roofs, swales, rain gardens, and retention basins manage stormwater.</div>
         </div>
       </div>
@@ -1711,8 +1715,8 @@
     <section class="slide" data-title="Olon River case">
       <div class="content">
         <div class="kicker reveal">5. Example: stream restoration</div>
-        <h2 class="slide-title reveal" style="--delay: 80ms">Re-meandering turns drainage into storage.</h2>
-        <p class="slide-subtitle reveal" style="--delay: 180ms">The Olon River example shows a degraded channel restored with meanders. The goal is not simply to make the river "natural looking"; it is to slow water, reconnect river-aquifer exchange, improve habitat, and reduce flood impacts.</p>
+        <h2 class="slide-title reveal" style="--delay: 80ms">Re meandering turns drainage into storage.</h2>
+        <p class="slide-subtitle reveal" style="--delay: 180ms">The Olon River example shows a degraded channel restored with meanders. The goal is not simply to make the river "natural looking"; it is to slow water, reconnect river aquifer exchange, improve habitat, and reduce flood impacts.</p>
         <div class="triptych">
           <div class="image-frame reveal" style="--delay: 260ms">
             <img src="assets/olon-2021.jpg" alt="Olon River restoration site in 2021.">
@@ -1773,13 +1777,13 @@
       </div>
     </section>
 
-    <section class="slide" data-title="Food-water nexus" style="--photo: url('assets/meander-farms.jpg')">
+    <section class="slide" data-title="Food water nexus" style="--photo: url('assets/meander-farms.jpg')">
       <div class="photo-bg" aria-hidden="true"></div>
       <div class="content grid-2">
         <div>
           <div class="kicker reveal">7. Agriculture as the central water user</div>
           <h2 class="slide-title reveal" style="--delay: 80ms">Food security and water security are the same conversation.</h2>
-          <p class="slide-subtitle reveal" style="--delay: 180ms">Irrigation is productive, but it concentrates water risk. Efficient use requires soil-water conservation on farms and landscape measures that keep rivers and aquifers functioning.</p>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">Irrigation is productive, but it concentrates water risk. Efficient use requires soil water conservation on farms and landscape measures that keep rivers and aquifers functioning.</p>
         </div>
         <div class="panel reveal" style="--delay: 260ms">
           <h3>Land, water, and food production</h3>
@@ -1808,7 +1812,7 @@
           <ul class="list">
             <li>Rainfed agriculture covers 80% of cultivated land and produces about 60% of crops.</li>
             <li>Irrigated agriculture covers 20% of cultivated land but produces about 40% of global food.</li>
-            <li>Projected 1998-2030 gains: 36% more food with 13% more agricultural water.</li>
+            <li>Projected 1998 2030 gains: 36% more food with 13% more agricultural water.</li>
           </ul>
         </div>
       </div>
@@ -1823,18 +1827,18 @@
           <div class="archetype reveal" style="--delay: 260ms; --tag: var(--gold)">
             <span class="tag">Surface water stress</span>
             <h3>Mixed production agriculture</h3>
-            <p>Seasonal low flows, drought, and competing urban-agricultural demand.</p>
+            <p>Seasonal low flows, drought, and competing urban agricultural demand.</p>
             <ul class="mini-list">
-              <li>Low water-use crops</li>
+              <li>Low water use crops</li>
               <li>Irrigation efficiency</li>
               <li>Riparian buffers</li>
-              <li>River-floodplain reconnection</li>
+              <li>River floodplain reconnection</li>
             </ul>
           </div>
           <div class="archetype reveal" style="--delay: 340ms; --tag: var(--water)">
             <span class="tag">Groundwater stress</span>
             <h3>Irrigated systems</h3>
-            <p>Aquifer depletion in intensive food-production regions.</p>
+            <p>Aquifer depletion in intensive food production regions.</p>
             <ul class="mini-list">
               <li>Crop diversification</li>
               <li>Ground cover</li>
@@ -1856,7 +1860,7 @@
           <div class="archetype reveal" style="--delay: 500ms; --tag: var(--clay)">
             <span class="tag">Flooding</span>
             <h3>Diverse agriculture systems</h3>
-            <p>Flood-prone croplands where floodplains also support habitat.</p>
+            <p>Flood prone croplands where floodplains also support habitat.</p>
             <ul class="mini-list">
               <li>Floodplain reconnection</li>
               <li>Riparian buffers</li>
@@ -1885,13 +1889,13 @@
           </div>
           <div class="grid-2">
             <div class="solution-card reveal" style="--delay: 260ms">
-              <h3>On-farm practices</h3>
+              <h3>On farm practices</h3>
               <p>Reduce irrigation demand and improve soil storage.</p>
               <ul class="mini-list">
-                <li>Low water-use crops and crop diversification</li>
+                <li>Low water use crops and crop diversification</li>
                 <li>Mulching, biochar, cover crops, and residue management</li>
                 <li>Reduced or no tillage</li>
-                <li>Drip, deficit, and alternate wet-dry irrigation</li>
+                <li>Drip, deficit, and alternate wet dry irrigation</li>
                 <li>Rotational grazing and grassland restoration</li>
               </ul>
             </div>
@@ -1919,13 +1923,13 @@
           <p class="slide-subtitle reveal" style="--delay: 180ms">Nutrient and sediment pollution rises when soil is exposed, fertilizer is mistimed, and runoff moves too quickly. NbS creates physical and biological filters across the system.</p>
           <ul class="list">
             <li class="reveal" style="--delay: 280ms">On farms: precision nutrient management, cover crops, intercropping, reduced tillage.</li>
-            <li class="reveal" style="--delay: 360ms">Across landscapes: filter strips, two-stage ditches, riparian buffers, wetlands, floodplain restoration.</li>
+            <li class="reveal" style="--delay: 360ms">Across landscapes: filter strips, two stage ditches, riparian buffers, wetlands, floodplain restoration.</li>
             <li class="reveal" style="--delay: 440ms">In water bodies: bivalve restoration and submerged aquatic vegetation.</li>
           </ul>
         </div>
         <div class="panel reveal" style="--delay: 260ms">
           <h3>Chesapeake Bay example</h3>
-          <p>A reported suite of on-farm practices reduced runoff of nitrogen, phosphorus, and sediment, while restored hectares retain additional pollutants before they enter the Bay.</p>
+          <p>A reported suite of on farm practices reduced runoff of nitrogen, phosphorus, and sediment, while restored hectares retain additional pollutants before they enter the Bay.</p>
           <div class="quality-graph">
             <div class="bar-row">
               <span>N runoff reduction</span>
@@ -1967,7 +1971,7 @@
         </div>
         <div class="panel reveal" style="--delay: 260ms">
           <div class="big-number">24%</div>
-          <h3>of global croplands are in flood-prone areas</h3>
+          <h3>of global croplands are in flood prone areas</h3>
           <ul class="list">
             <li>Floodplains regulate flow and recharge groundwater.</li>
             <li>Riparian buffers reduce erosion and create habitat corridors.</li>
@@ -1992,7 +1996,7 @@
           <div class="mechanism reveal" style="--delay: 330ms; --icon: var(--leaf)">
             <div class="icon">2</div>
             <h3>Rain gardens</h3>
-            <p>Turn local runoff into infiltration and plant-supported treatment.</p>
+            <p>Turn local runoff into infiltration and plant supported treatment.</p>
           </div>
           <div class="mechanism reveal" style="--delay: 400ms; --icon: var(--gold)">
             <div class="icon">3</div>
@@ -2017,16 +2021,16 @@
       <div class="content grid-2">
         <div>
           <div class="kicker reveal">13. Governance is part of the solution</div>
-          <h2 class="slide-title reveal" style="--delay: 80ms">NbS fails when treated as a one-time construction project.</h2>
+          <h2 class="slide-title reveal" style="--delay: 80ms">NbS fails when treated as a one time construction project.</h2>
           <p class="slide-subtitle reveal" style="--delay: 180ms">Living infrastructure changes over time. It needs planning, monitoring, consultation, maintenance, and adaptive management.</p>
           <div class="triad">
             <div class="panel reveal" style="--delay: 280ms">
               <h3>Planning</h3>
-              <p>Coherent actions, optimized allocation, long-term vision.</p>
+              <p>Coherent actions, optimized allocation, long term vision.</p>
             </div>
             <div class="panel reveal" style="--delay: 360ms">
               <h3>Monitoring</h3>
-              <p>Ecological indicators, water-quality data, public reporting.</p>
+              <p>Ecological indicators, water quality data, public reporting.</p>
             </div>
             <div class="panel reveal" style="--delay: 440ms">
               <h3>Consultation</h3>
@@ -2035,7 +2039,7 @@
           </div>
         </div>
         <div class="image-frame contain governance-img reveal" style="--delay: 260ms">
-          <img src="assets/governance-triad.jpg" alt="Diagram showing planning, monitoring, and consultation as dimensions of nature-based solutions.">
+          <img src="assets/governance-triad.jpg" alt="Diagram showing planning, monitoring, and consultation as dimensions of nature based solutions.">
           <div class="caption">Three dimensions that make NbS effective, sustainable, and socially accepted.</div>
         </div>
       </div>
@@ -2044,8 +2048,8 @@
     <section class="slide" data-title="Implementation">
       <div class="content">
         <div class="kicker reveal">14. Implementation roadmap</div>
-        <h2 class="slide-title reveal" style="--delay: 80ms">From isolated projects to a water-resilient landscape.</h2>
-        <p class="slide-subtitle reveal" style="--delay: 180ms">A practical NbS program should move through diagnosis, co-design, financing, implementation, and adaptive management.</p>
+        <h2 class="slide-title reveal" style="--delay: 80ms">From isolated projects to a water resilient landscape.</h2>
+        <p class="slide-subtitle reveal" style="--delay: 180ms">A practical NbS program should move through diagnosis, co design, financing, implementation, and adaptive management.</p>
         <div class="roadmap">
           <div class="step reveal" data-step="1" style="--delay: 260ms; --step-color: var(--water)">
             <h3>Diagnose the watershed</h3>
@@ -2056,12 +2060,12 @@
             <p>Match NbS to the dominant water challenge and production system.</p>
           </div>
           <div class="step reveal" data-step="3" style="--delay: 420ms; --step-color: var(--gold)">
-            <h3>Co-design locally</h3>
+            <h3>Co design locally</h3>
             <p>Bring farmers, utilities, municipalities, communities, engineers, and ecologists together.</p>
           </div>
           <div class="step reveal" data-step="4" style="--delay: 500ms; --step-color: var(--clay)">
             <h3>Blend finance</h3>
-            <p>Use public incentives, grants, water funds, ecosystem-service payments, and risk-reduction funding.</p>
+            <p>Use public incentives, grants, water funds, ecosystem service payments, and risk reduction funding.</p>
           </div>
           <div class="step reveal" data-step="5" style="--delay: 580ms; --step-color: var(--berry)">
             <h3>Monitor and adapt</h3>
@@ -2077,7 +2081,7 @@
         <div>
           <div class="kicker reveal">15. Limits and design cautions</div>
           <h2 class="slide-title reveal" style="--delay: 80ms">NbS is powerful, but not magic.</h2>
-          <p class="slide-subtitle reveal" style="--delay: 180ms">The sources repeatedly stress that NbS is context-dependent and must often be combined with grey infrastructure, rules, maintenance, and monitoring.</p>
+          <p class="slide-subtitle reveal" style="--delay: 180ms">The sources repeatedly stress that NbS is context dependent and must often be combined with grey infrastructure, rules, maintenance, and monitoring.</p>
         </div>
         <div class="panel reveal" style="--delay: 260ms">
           <h3>Questions every project should answer</h3>
@@ -2127,9 +2131,9 @@
         <div class="kicker reveal">Sources used</div>
         <h2 class="slide-title reveal" style="--delay: 80ms">Presentation bibliography</h2>
         <ul class="sources-list">
-          <li class="reveal" style="--delay: 180ms"><strong>Rey, F. et al. (2026).</strong> "Nature-based solutions for water management: Pluridisciplinary state-of-the-art and research needs." <em>Ecological Engineering</em> 225, 107887. DOI: 10.1016/j.ecoleng.2025.107887.</li>
-          <li class="reveal" style="--delay: 260ms"><strong>Atwood, L. et al. (2025).</strong> <em>Archetypes for Nature-Based Adaptation: Aligning Nature-Based Solutions and Enabling Conditions to Address Water Risk in Food Producing Landscapes.</em> The Nature Conservancy and International Institute for Applied Systems Analysis.</li>
-          <li class="reveal" style="--delay: 340ms"><strong>United Nations World Water Development Report 3.</strong> <em>Water in a Changing World - Facts and Figures.</em> Used for global water demand, investment, agriculture, and demographic context.</li>
+          <li class="reveal" style="--delay: 180ms"><strong>Rey, F. et al. (2026).</strong> "Nature based solutions for water management: Pluridisciplinary state of the art and research needs." <em>Ecological Engineering</em> 225, 107887. DOI: 10.1016/j.ecoleng.2025.107887.</li>
+          <li class="reveal" style="--delay: 260ms"><strong>Atwood, L. et al. (2025).</strong> <em>Archetypes for Nature Based Adaptation: Aligning Nature Based Solutions and Enabling Conditions to Address Water Risk in Food Producing Landscapes.</em> The Nature Conservancy and International Institute for Applied Systems Analysis.</li>
+          <li class="reveal" style="--delay: 340ms"><strong>United Nations World Water Development Report 3.</strong> <em>Water in a Changing World Facts and Figures.</em> Used for global water demand, investment, agriculture, and demographic context.</li>
           <li class="reveal" style="--delay: 420ms"><strong>Provided figures and photos.</strong> NbS system map, Olon River restoration sequence, governance triad, agricultural landscapes, floodplain image, terraced water landscape, and hybrid water infrastructure image.</li>
         </ul>
       </div>
@@ -2325,8 +2329,26 @@
       });
     });
 
-    window.addEventListener("resize", resizeMotionCanvas);
+    function fitOneLineTitles() {
+      document.querySelectorAll(".slide-title, .hero-title").forEach((title) => {
+        title.style.removeProperty("--fit-title-size");
+        const style = getComputedStyle(title);
+        let size = parseFloat(style.fontSize);
+        const minSize = title.classList.contains("hero-title") ? 20 : 12;
+        while (title.scrollWidth > title.clientWidth && size > minSize) {
+          size -= 1;
+          title.style.setProperty("--fit-title-size", `${size}px`);
+        }
+      });
+    }
+
+    window.addEventListener("resize", () => {
+      resizeMotionCanvas();
+      fitOneLineTitles();
+    });
     resizeMotionCanvas();
+    fitOneLineTitles();
+    document.fonts?.ready.then(fitOneLineTitles);
     if (!reduceMotion) requestAnimationFrame(drawMotionFrame);
 
     function updateSlides(target) {
@@ -2339,7 +2361,8 @@
       });
       count.textContent = `${index + 1} / ${slides.length}`;
       progress.style.width = `${((index + 1) / slides.length) * 100}%`;
-      document.title = `${slides[index].dataset.title} - Nature-Based Solutions`;
+      document.title = `${slides[index].dataset.title} Nature Based Solutions`;
+      fitOneLineTitles();
       addRipple(window.innerWidth * 0.5, window.innerHeight * 0.82, 0.18);
     }
 
