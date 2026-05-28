@@ -75,7 +75,7 @@
       background-size: cover;
       background-position: center;
       filter: saturate(1.08) contrast(1.04);
-      transform: scale(1.04);
+      transform: scale(1.02);
       will-change: transform;
     }
 
@@ -88,12 +88,12 @@
     }
 
     .slide.active::before {
-      animation: photo-zoom 34s ease-in-out infinite alternate;
+      animation: photo-zoom 24s ease-in-out infinite alternate;
     }
 
     @keyframes photo-zoom {
-      from { transform: scale(1.04); }
-      to { transform: scale(1.14); }
+      from { transform: scale(1.02); }
+      to { transform: scale(1.24); }
     }
 
     .slide:nth-of-type(1) { --photo: url("assets/terraced-water.jpg"); }
