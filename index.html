@@ -23,8 +23,6 @@
       --shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
       --radius: 8px;
       --max: 1180px;
-      --mx: 50vw;
-      --my: 50vh;
     }
 
     * {
@@ -40,69 +38,6 @@
       background: var(--bg);
       color: var(--ink);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: -20%;
-      pointer-events: none;
-      background:
-        repeating-linear-gradient(112deg, transparent 0 58px, rgba(120, 235, 220, 0.07) 60px 62px, transparent 66px 128px),
-        repeating-linear-gradient(68deg, transparent 0 90px, rgba(246, 200, 111, 0.05) 92px 94px, transparent 98px 180px);
-      mix-blend-mode: screen;
-      opacity: 0.75;
-      animation: caustics 18s linear infinite;
-      z-index: 1;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.08) 42%, transparent 52%),
-        linear-gradient(180deg, rgba(6, 23, 27, 0.18), rgba(6, 23, 27, 0.48));
-      opacity: 0.6;
-      animation: light-sweep 12s ease-in-out infinite;
-      z-index: 2;
-    }
-
-    .motion-bg {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 4;
-      opacity: 0.5;
-      mix-blend-mode: screen;
-    }
-
-    .mouse-field {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 5;
-      opacity: 0.72;
-      background:
-        radial-gradient(circle at var(--mx) var(--my), rgba(83, 213, 229, 0.22), rgba(83, 213, 229, 0.08) 12vw, transparent 28vw),
-        radial-gradient(circle at calc(var(--mx) + 12vw) calc(var(--my) + 8vh), rgba(119, 200, 109, 0.12), transparent 24vw);
-      mix-blend-mode: screen;
-      transition: opacity 260ms ease;
-    }
-
-    @keyframes caustics {
-      0% { transform: translate3d(-2%, -1%, 0) rotate(0deg); }
-      50% { transform: translate3d(2%, 1%, 0) rotate(1deg); }
-      100% { transform: translate3d(-2%, -1%, 0) rotate(0deg); }
-    }
-
-    @keyframes light-sweep {
-      0%, 18% { transform: translateX(-24%); opacity: 0; }
-      40% { opacity: 0.38; }
-      62%, 100% { transform: translateX(28%); opacity: 0; }
     }
 
     .deck {
@@ -136,35 +71,49 @@
 
     .slide::before {
       z-index: 1;
-      opacity: 0.42;
-      background:
-        radial-gradient(520px 300px at var(--mx) var(--my), rgba(83, 213, 229, 0.16), transparent 74%),
-        repeating-radial-gradient(ellipse at 18% 110%, transparent 0 31px, rgba(83, 213, 229, 0.06) 33px 35px, transparent 38px 68px);
-      transform: translate3d(calc((50vw - var(--mx)) * 0.012), calc((50vh - var(--my)) * 0.012), 0);
-      animation: watershed-pulse 10s ease-in-out infinite alternate;
+      background-image: var(--photo);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.08) contrast(1.04);
+      transform: scale(1.04);
+      will-change: transform;
     }
 
     .slide::after {
       z-index: 2;
-      top: auto;
-      height: 36%;
       background:
-        linear-gradient(180deg, transparent, rgba(83, 213, 229, 0.08)),
-        repeating-linear-gradient(172deg, transparent 0 34px, rgba(83, 213, 229, 0.11) 36px 38px, transparent 40px 78px);
-      mask-image: linear-gradient(180deg, transparent, #000 32%, #000);
-      transform: translateY(12%);
-      animation: bottom-current 14s linear infinite;
+        linear-gradient(90deg, rgba(4, 17, 20, 0.9), rgba(4, 17, 20, 0.58) 47%, rgba(4, 17, 20, 0.76)),
+        radial-gradient(circle at 72% 18%, rgba(83, 213, 229, 0.18), transparent 40%),
+        linear-gradient(0deg, rgba(4, 17, 20, 0.82), rgba(4, 17, 20, 0.18) 44%, rgba(4, 17, 20, 0.38));
     }
 
-    @keyframes watershed-pulse {
-      from { opacity: 0.28; filter: hue-rotate(0deg); }
-      to { opacity: 0.52; filter: hue-rotate(14deg); }
+    .slide.active::before {
+      animation: photo-zoom 34s ease-in-out infinite alternate;
     }
 
-    @keyframes bottom-current {
-      from { background-position: 0 0, 0 0; }
-      to { background-position: 0 80px, 220px 0; }
+    @keyframes photo-zoom {
+      from { transform: scale(1.04); }
+      to { transform: scale(1.14); }
     }
+
+    .slide:nth-of-type(1) { --photo: url("assets/terraced-water.jpg"); }
+    .slide:nth-of-type(2) { --photo: url("assets/hybrid-infrastructure.jpg"); }
+    .slide:nth-of-type(3) { --photo: url("assets/nbs-system-map.jpg"); }
+    .slide:nth-of-type(4) { --photo: url("assets/floodplain-riparian.jpg"); }
+    .slide:nth-of-type(5) { --photo: url("assets/nbs-system-map.jpg"); }
+    .slide:nth-of-type(6) { --photo: url("assets/olon-2023.jpg"); }
+    .slide:nth-of-type(7) { --photo: url("assets/floodplain-riparian.jpg"); }
+    .slide:nth-of-type(8) { --photo: url("assets/meander-farms.jpg"); }
+    .slide:nth-of-type(9) { --photo: url("assets/terraced-water.jpg"); }
+    .slide:nth-of-type(10) { --photo: url("assets/hybrid-infrastructure.jpg"); }
+    .slide:nth-of-type(11) { --photo: url("assets/floodplain-riparian.jpg"); }
+    .slide:nth-of-type(12) { --photo: url("assets/floodplain-riparian.jpg"); }
+    .slide:nth-of-type(13) { --photo: url("assets/nbs-system-map.jpg"); }
+    .slide:nth-of-type(14) { --photo: url("assets/governance-triad.jpg"); }
+    .slide:nth-of-type(15) { --photo: url("assets/meander-farms.jpg"); }
+    .slide:nth-of-type(16) { --photo: url("assets/hybrid-infrastructure.jpg"); }
+    .slide:nth-of-type(17) { --photo: url("assets/terraced-water.jpg"); }
+    .slide:nth-of-type(18) { --photo: url("assets/nbs-system-map.jpg"); }
 
     .slide.active {
       opacity: 1;
@@ -231,26 +180,6 @@
       color: rgba(246, 251, 248, 0.62);
       font-size: 0.78rem;
       line-height: 1.35;
-    }
-
-    .photo-bg {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      background-image: linear-gradient(90deg, rgba(4, 17, 20, 0.88), rgba(4, 17, 20, 0.52), rgba(4, 17, 20, 0.2)), var(--photo);
-      background-size: cover;
-      background-position: center;
-      transform: scale(1.02);
-    }
-
-    .photo-bg::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(0deg, rgba(6, 23, 27, 0.72), transparent 38%),
-        linear-gradient(140deg, rgba(83, 213, 229, 0.16), transparent 40%),
-        linear-gradient(35deg, rgba(119, 200, 109, 0.14), transparent 42%);
     }
 
     .hero .content {
@@ -472,7 +401,6 @@
       box-shadow: var(--shadow);
       background: #0b2326;
       transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
-      transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
     }
 
     .image-frame::before {
@@ -483,7 +411,7 @@
       pointer-events: none;
       background:
         linear-gradient(115deg, transparent 12%, rgba(255, 255, 255, 0.16) 38%, transparent 54%),
-        radial-gradient(circle at var(--mx) var(--my), rgba(83, 213, 229, 0.2), transparent 34%);
+        radial-gradient(circle at 68% 22%, rgba(83, 213, 229, 0.18), transparent 34%);
       opacity: 0;
       transform: translateX(-28%);
       transition: opacity 260ms ease;
@@ -1480,10 +1408,6 @@
         background: #fff;
       }
 
-      body::before,
-      body::after,
-      .motion-bg,
-      .mouse-field,
       .controls,
       .progress {
         display: none;
@@ -1515,19 +1439,12 @@
         transform: none;
       }
 
-      .motion-bg,
-      .mouse-field {
-        display: none;
-      }
     }
   </style>
 </head>
 <body>
-  <canvas id="motionCanvas" class="motion-bg" aria-hidden="true"></canvas>
-  <div class="mouse-field" aria-hidden="true"></div>
   <main class="deck" aria-live="polite">
     <section class="slide hero active" data-title="Title" style="--photo: url('assets/terraced-water.jpg')">
-      <div class="photo-bg" aria-hidden="true"></div>
       <div class="content">
         <div class="kicker reveal">CE 476 presentation</div>
         <h1 class="hero-title reveal" style="--delay: 100ms" aria-label="Nature Based Solutions for Efficient Use of Water Resources"><span class="word" style="--i:0">Nature</span> <span class="word" style="--i:1">Based</span> <span class="word" style="--i:2">Solutions</span> <span class="word" style="--i:3">for</span> <span class="word" style="--i:4">Efficient</span> <span class="word" style="--i:5">Use</span> <span class="word" style="--i:6">of</span> <span class="word" style="--i:7">Water</span> <span class="word" style="--i:8">Resources</span></h1>
@@ -1778,7 +1695,6 @@
     </section>
 
     <section class="slide" data-title="Food water nexus" style="--photo: url('assets/meander-farms.jpg')">
-      <div class="photo-bg" aria-hidden="true"></div>
       <div class="content grid-2">
         <div>
           <div class="kicker reveal">7. Agriculture as the central water user</div>
@@ -1962,7 +1878,6 @@
     </section>
 
     <section class="slide" data-title="Flooding solutions" style="--photo: url('assets/floodplain-riparian.jpg')">
-      <div class="photo-bg" aria-hidden="true"></div>
       <div class="content grid-2">
         <div>
           <div class="kicker reveal">11. NbS for flood risk</div>
@@ -2076,7 +1991,6 @@
     </section>
 
     <section class="slide" data-title="Limits and hybrid design" style="--photo: url('assets/hybrid-infrastructure.jpg')">
-      <div class="photo-bg" aria-hidden="true"></div>
       <div class="content grid-2">
         <div>
           <div class="kicker reveal">15. Limits and design cautions</div>
@@ -2155,179 +2069,7 @@
     const fullButton = document.getElementById("full");
     const count = document.getElementById("count");
     const progress = document.getElementById("progress");
-    const canvas = document.getElementById("motionCanvas");
-    const ctx = canvas.getContext("2d", { alpha: true });
-    const root = document.documentElement;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const motionState = {
-      width: 0,
-      height: 0,
-      dpr: 1,
-      time: 0,
-      paletteIndex: 0,
-      mouse: { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false },
-      particles: [],
-      ripples: [],
-      palettes: [
-        ["#53d5e5", "#77c86d", "#f6c86f"],
-        ["#62e1f3", "#88d58b", "#e67f5f"],
-        ["#35b8c6", "#bde37b", "#f6c86f"],
-        ["#8ee6f2", "#54c176", "#b36a9f"]
-      ]
-    };
     let index = 0;
-
-    function resizeMotionCanvas() {
-      motionState.dpr = Math.min(window.devicePixelRatio || 1, 2);
-      motionState.width = window.innerWidth;
-      motionState.height = window.innerHeight;
-      canvas.width = Math.floor(motionState.width * motionState.dpr);
-      canvas.height = Math.floor(motionState.height * motionState.dpr);
-      canvas.style.width = `${motionState.width}px`;
-      canvas.style.height = `${motionState.height}px`;
-      ctx.setTransform(motionState.dpr, 0, 0, motionState.dpr, 0, 0);
-      seedParticles();
-    }
-
-    function seedParticles() {
-      const countParticles = Math.min(120, Math.max(62, Math.floor(motionState.width / 13)));
-      motionState.particles = Array.from({ length: countParticles }, (_, i) => ({
-        x: Math.random() * motionState.width,
-        y: Math.random() * motionState.height,
-        baseY: Math.random() * motionState.height,
-        speed: 0.18 + Math.random() * 0.72,
-        size: 0.8 + Math.random() * 2.8,
-        phase: Math.random() * Math.PI * 2,
-        type: i % 7 === 0 ? "leaf" : "drop",
-        alpha: 0.14 + Math.random() * 0.38
-      }));
-    }
-
-    function addRipple(x, y, strength = 0.24) {
-      if (reduceMotion) return;
-      motionState.ripples.push({ x, y, r: 8, a: strength, w: 1.4 + strength * 6 });
-      if (motionState.ripples.length > 18) motionState.ripples.shift();
-    }
-
-    function drawMotionFrame() {
-      if (reduceMotion) return;
-      const { width, height, mouse, particles, palettes } = motionState;
-      const palette = palettes[motionState.paletteIndex % palettes.length];
-      motionState.time += 0.009;
-      ctx.clearRect(0, 0, width, height);
-      ctx.globalCompositeOperation = "lighter";
-
-      for (let lane = 0; lane < 6; lane++) {
-        const yBase = height * (0.14 + lane * 0.145);
-        ctx.beginPath();
-        for (let x = -60; x <= width + 60; x += 26) {
-          const y = yBase + Math.sin(x * 0.008 + motionState.time * (1.4 + lane * 0.12) + lane) * (16 + lane * 2);
-          if (x === -60) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = lane % 2 ? "rgba(119, 200, 109, 0.075)" : "rgba(83, 213, 229, 0.105)";
-        ctx.lineWidth = 1.1 + (lane % 3) * 0.45;
-        ctx.setLineDash([12, 28]);
-        ctx.lineDashOffset = -motionState.time * 90 * (lane + 1);
-        ctx.stroke();
-      }
-      ctx.setLineDash([]);
-
-      for (const p of particles) {
-        const influenceX = (mouse.x - p.x) * 0.0009;
-        const influenceY = (mouse.y - p.y) * 0.00045;
-        p.phase += 0.013 + p.speed * 0.006;
-        p.x += p.speed + influenceX;
-        p.baseY += influenceY;
-        p.y = p.baseY + Math.sin(p.phase) * (12 + p.size * 5);
-        if (p.x > width + 28) p.x = -28;
-        if (p.x < -34) p.x = width + 26;
-        if (p.baseY > height + 30) p.baseY = -30;
-        if (p.baseY < -35) p.baseY = height + 30;
-
-        if (p.type === "leaf") {
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(Math.sin(p.phase) * 0.9);
-          ctx.fillStyle = `rgba(119, 200, 109, ${p.alpha})`;
-          ctx.beginPath();
-          ctx.ellipse(0, 0, p.size * 2.4, p.size * 0.92, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        } else {
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(Math.sin(p.phase) * 0.25);
-          ctx.fillStyle = `rgba(83, 213, 229, ${p.alpha * 0.8})`;
-          ctx.beginPath();
-          ctx.moveTo(0, -p.size * 3.6);
-          ctx.quadraticCurveTo(p.size * 1.7, -p.size * 0.3, 0, p.size * 3.8);
-          ctx.quadraticCurveTo(-p.size * 1.7, -p.size * 0.3, 0, -p.size * 3.6);
-          ctx.fill();
-          ctx.strokeStyle = `rgba(246, 200, 111, ${p.alpha * 0.2})`;
-          ctx.lineWidth = 0.55;
-          ctx.beginPath();
-          ctx.moveTo(-p.size * 9, 0);
-          ctx.quadraticCurveTo(0, Math.sin(p.phase) * 4, p.size * 9, 0);
-          ctx.stroke();
-          ctx.restore();
-        }
-      }
-
-      motionState.ripples = motionState.ripples.filter((r) => r.a > 0.01 && r.r < Math.max(width, height) * 0.5);
-      for (const r of motionState.ripples) {
-        ctx.strokeStyle = `rgba(83, 213, 229, ${r.a})`;
-        ctx.lineWidth = r.w;
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.strokeStyle = `rgba(119, 200, 109, ${r.a * 0.45})`;
-        ctx.lineWidth = Math.max(0.7, r.w * 0.45);
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.r * 0.62, 0, Math.PI * 2);
-        ctx.stroke();
-        r.r += 2.4;
-        r.a *= 0.94;
-      }
-
-      requestAnimationFrame(drawMotionFrame);
-    }
-
-    function setMousePosition(x, y) {
-      motionState.mouse.x = x;
-      motionState.mouse.y = y;
-      root.style.setProperty("--mx", `${x}px`);
-      root.style.setProperty("--my", `${y}px`);
-    }
-
-    let lastRippleAt = 0;
-    window.addEventListener("pointermove", (event) => {
-      setMousePosition(event.clientX, event.clientY);
-      const now = performance.now();
-      if (now - lastRippleAt > 95) {
-        addRipple(event.clientX, event.clientY, 0.11);
-        lastRippleAt = now;
-      }
-    }, { passive: true });
-
-    window.addEventListener("pointerdown", (event) => {
-      setMousePosition(event.clientX, event.clientY);
-      addRipple(event.clientX, event.clientY, 0.32);
-    }, { passive: true });
-
-    document.querySelectorAll(".image-frame").forEach((frame) => {
-      frame.addEventListener("pointermove", (event) => {
-        const rect = frame.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - 0.5;
-        const y = (event.clientY - rect.top) / rect.height - 0.5;
-        frame.style.setProperty("--tilt-y", `${x * 5}deg`);
-        frame.style.setProperty("--tilt-x", `${y * -5}deg`);
-      }, { passive: true });
-      frame.addEventListener("pointerleave", () => {
-        frame.style.setProperty("--tilt-x", "0deg");
-        frame.style.setProperty("--tilt-y", "0deg");
-      });
-    });
 
     function fitOneLineTitles() {
       document.querySelectorAll(".slide-title, .hero-title").forEach((title) => {
@@ -2342,18 +2084,12 @@
       });
     }
 
-    window.addEventListener("resize", () => {
-      resizeMotionCanvas();
-      fitOneLineTitles();
-    });
-    resizeMotionCanvas();
+    window.addEventListener("resize", fitOneLineTitles);
     fitOneLineTitles();
     document.fonts?.ready.then(fitOneLineTitles);
-    if (!reduceMotion) requestAnimationFrame(drawMotionFrame);
 
     function updateSlides(target) {
       index = (target + slides.length) % slides.length;
-      motionState.paletteIndex = index;
       slides.forEach((slide, i) => {
         slide.classList.toggle("active", i === index);
         slide.classList.toggle("previous", i < index);
@@ -2363,7 +2099,6 @@
       progress.style.width = `${((index + 1) / slides.length) * 100}%`;
       document.title = `${slides[index].dataset.title} Nature Based Solutions`;
       fitOneLineTitles();
-      addRipple(window.innerWidth * 0.5, window.innerHeight * 0.82, 0.18);
     }
 
     prevButton.addEventListener("click", () => updateSlides(index - 1));
