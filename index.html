@@ -61,7 +61,6 @@
       transition: opacity 480ms ease, transform 580ms ease;
     }
 
-    .slide::before,
     .slide::after {
       content: "";
       position: absolute;
@@ -69,11 +68,13 @@
       pointer-events: none;
     }
 
-    .slide::before {
+    .slide-video-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       z-index: 1;
-      background-image: var(--photo);
-      background-size: cover;
-      background-position: center;
+      object-fit: cover;
       filter: saturate(1.08) contrast(1.04);
       transform: scale(1.02);
       will-change: transform;
@@ -87,33 +88,14 @@
         linear-gradient(0deg, rgba(4, 17, 20, 0.82), rgba(4, 17, 20, 0.18) 44%, rgba(4, 17, 20, 0.38));
     }
 
-    .slide.active::before {
-      animation: photo-zoom 24s ease-in-out infinite alternate;
+    .slide.active .slide-video-bg {
+      animation: video-zoom 18s ease-in-out infinite alternate;
     }
 
-    @keyframes photo-zoom {
+    @keyframes video-zoom {
       from { transform: scale(1.02); }
-      to { transform: scale(1.24); }
+      to { transform: scale(1.18); }
     }
-
-    .slide:nth-of-type(1) { --photo: url("assets/terraced-water.jpg"); }
-    .slide:nth-of-type(2) { --photo: url("assets/hybrid-infrastructure.jpg"); }
-    .slide:nth-of-type(3) { --photo: url("assets/nbs-system-map.jpg"); }
-    .slide:nth-of-type(4) { --photo: url("assets/floodplain-riparian.jpg"); }
-    .slide:nth-of-type(5) { --photo: url("assets/nbs-system-map.jpg"); }
-    .slide:nth-of-type(6) { --photo: url("assets/olon-2023.jpg"); }
-    .slide:nth-of-type(7) { --photo: url("assets/floodplain-riparian.jpg"); }
-    .slide:nth-of-type(8) { --photo: url("assets/meander-farms.jpg"); }
-    .slide:nth-of-type(9) { --photo: url("assets/terraced-water.jpg"); }
-    .slide:nth-of-type(10) { --photo: url("assets/hybrid-infrastructure.jpg"); }
-    .slide:nth-of-type(11) { --photo: url("assets/floodplain-riparian.jpg"); }
-    .slide:nth-of-type(12) { --photo: url("assets/floodplain-riparian.jpg"); }
-    .slide:nth-of-type(13) { --photo: url("assets/nbs-system-map.jpg"); }
-    .slide:nth-of-type(14) { --photo: url("assets/governance-triad.jpg"); }
-    .slide:nth-of-type(15) { --photo: url("assets/meander-farms.jpg"); }
-    .slide:nth-of-type(16) { --photo: url("assets/hybrid-infrastructure.jpg"); }
-    .slide:nth-of-type(17) { --photo: url("assets/terraced-water.jpg"); }
-    .slide:nth-of-type(18) { --photo: url("assets/nbs-system-map.jpg"); }
 
     .slide.active {
       opacity: 1;
@@ -1162,6 +1144,148 @@
       color: var(--ink);
     }
 
+    .thank-you-slide {
+      place-items: center;
+    }
+
+    .thank-you-slide::after {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(83, 213, 229, 0.18), transparent 42%),
+        linear-gradient(90deg, rgba(3, 13, 16, 0.86), rgba(3, 13, 16, 0.56) 50%, rgba(3, 13, 16, 0.86)),
+        linear-gradient(0deg, rgba(3, 13, 16, 0.82), rgba(3, 13, 16, 0.1) 46%, rgba(3, 13, 16, 0.78));
+    }
+
+    .thank-clips {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .thanks-clip {
+      position: absolute;
+      width: min(32vw, 420px);
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      opacity: 0;
+      border-radius: var(--radius);
+      border: 1px solid rgba(246, 251, 248, 0.24);
+      box-shadow: 0 28px 72px rgba(0, 0, 0, 0.48), 0 0 28px rgba(83, 213, 229, 0.12);
+      filter: saturate(1.12) contrast(1.05);
+      transform: translate(var(--from-x), var(--from-y)) rotate(var(--angle)) scale(0.88);
+    }
+
+    .thank-you-slide.active .thanks-clip {
+      animation: thanks-clip-float 8.6s ease-in-out both;
+      animation-delay: var(--clip-delay);
+    }
+
+    .clip-top-a {
+      left: 7vw;
+      top: 2vh;
+      --from-x: -18vw;
+      --from-y: -16vh;
+      --to-x: 0vw;
+      --to-y: 12vh;
+      --angle: -8deg;
+      --clip-delay: 0ms;
+    }
+
+    .clip-top-b {
+      left: 27vw;
+      top: 0;
+      --from-x: -16vw;
+      --from-y: -20vh;
+      --to-x: 2vw;
+      --to-y: 17vh;
+      --angle: 7deg;
+      --clip-delay: 260ms;
+    }
+
+    .clip-bottom-a {
+      right: 7vw;
+      bottom: 2vh;
+      --from-x: 18vw;
+      --from-y: 16vh;
+      --to-x: 0vw;
+      --to-y: -12vh;
+      --angle: 8deg;
+      --clip-delay: 120ms;
+    }
+
+    .clip-bottom-b {
+      right: 27vw;
+      bottom: 0;
+      --from-x: 16vw;
+      --from-y: 20vh;
+      --to-x: -2vw;
+      --to-y: -17vh;
+      --angle: -7deg;
+      --clip-delay: 420ms;
+    }
+
+    @keyframes thanks-clip-float {
+      0% {
+        opacity: 0;
+        transform: translate(var(--from-x), var(--from-y)) rotate(var(--angle)) scale(0.88);
+      }
+      18%, 58% {
+        opacity: 0.94;
+        transform: translate(var(--to-x), var(--to-y)) rotate(var(--angle)) scale(1);
+      }
+      86%, 100% {
+        opacity: 0;
+        transform: translate(var(--to-x), var(--to-y)) rotate(var(--angle)) scale(0.98);
+      }
+    }
+
+    .thank-message {
+      position: relative;
+      z-index: 4;
+      width: min(100%, 1180px);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+    }
+
+    .thank-you-slide.active .thank-message {
+      animation: thank-message-in 2.8s ease forwards;
+      animation-delay: 6.7s;
+    }
+
+    .thank-message .slide-title {
+      --title-size: clamp(2.6rem, 6.6vw, 6.8rem);
+      text-shadow: 0 18px 54px rgba(0, 0, 0, 0.66), 0 0 34px rgba(83, 213, 229, 0.34);
+    }
+
+    .thank-message p {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.35rem;
+      font-weight: 650;
+    }
+
+    @keyframes thank-message-in {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .thanks-clip {
+        width: 48vw;
+      }
+
+      .clip-top-b {
+        left: 36vw;
+      }
+
+      .clip-bottom-b {
+        right: 36vw;
+      }
+    }
+
     .controls {
       position: fixed;
       right: 28px;
@@ -1444,7 +1568,7 @@
 </head>
 <body>
   <main class="deck" aria-live="polite">
-    <section class="slide hero active" data-title="Title" style="--photo: url('assets/terraced-water.jpg')">
+    <section class="slide hero active" data-title="Title">
       <div class="content">
         <div class="kicker reveal">CE 476 presentation</div>
         <h1 class="hero-title reveal" style="--delay: 100ms" aria-label="Nature Based Solutions for Efficient Use of Water Resources"><span class="word" style="--i:0">Nature</span> <span class="word" style="--i:1">Based</span> <span class="word" style="--i:2">Solutions</span> <span class="word" style="--i:3">for</span> <span class="word" style="--i:4">Efficient</span> <span class="word" style="--i:5">Use</span> <span class="word" style="--i:6">of</span> <span class="word" style="--i:7">Water</span> <span class="word" style="--i:8">Resources</span></h1>
@@ -1694,7 +1818,7 @@
       </div>
     </section>
 
-    <section class="slide" data-title="Food water nexus" style="--photo: url('assets/meander-farms.jpg')">
+    <section class="slide" data-title="Food water nexus">
       <div class="content grid-2">
         <div>
           <div class="kicker reveal">7. Agriculture as the central water user</div>
@@ -1877,7 +2001,7 @@
       </div>
     </section>
 
-    <section class="slide" data-title="Flooding solutions" style="--photo: url('assets/floodplain-riparian.jpg')">
+    <section class="slide" data-title="Flooding solutions">
       <div class="content grid-2">
         <div>
           <div class="kicker reveal">11. NbS for flood risk</div>
@@ -1990,7 +2114,7 @@
       </div>
     </section>
 
-    <section class="slide" data-title="Limits and hybrid design" style="--photo: url('assets/hybrid-infrastructure.jpg')">
+    <section class="slide" data-title="Limits and hybrid design">
       <div class="content grid-2">
         <div>
           <div class="kicker reveal">15. Limits and design cautions</div>
@@ -2048,15 +2172,28 @@
           <li class="reveal" style="--delay: 180ms"><strong>Rey, F. et al. (2026).</strong> "Nature based solutions for water management: Pluridisciplinary state of the art and research needs." <em>Ecological Engineering</em> 225, 107887. DOI: 10.1016/j.ecoleng.2025.107887.</li>
           <li class="reveal" style="--delay: 260ms"><strong>Atwood, L. et al. (2025).</strong> <em>Archetypes for Nature Based Adaptation: Aligning Nature Based Solutions and Enabling Conditions to Address Water Risk in Food Producing Landscapes.</em> The Nature Conservancy and International Institute for Applied Systems Analysis.</li>
           <li class="reveal" style="--delay: 340ms"><strong>United Nations World Water Development Report 3.</strong> <em>Water in a Changing World Facts and Figures.</em> Used for global water demand, investment, agriculture, and demographic context.</li>
-          <li class="reveal" style="--delay: 420ms"><strong>Provided figures and photos.</strong> NbS system map, Olon River restoration sequence, governance triad, agricultural landscapes, floodplain image, terraced water landscape, and hybrid water infrastructure image.</li>
+          <li class="reveal" style="--delay: 420ms"><strong>Provided figures, photos, and videos.</strong> NbS system map, Olon River restoration sequence, governance triad, agricultural landscapes, floodplain image, terraced water landscape, hybrid water infrastructure image, and background video clips.</li>
         </ul>
+      </div>
+    </section>
+
+    <section class="slide thank-you-slide" data-title="Thank you">
+      <div class="thank-clips" aria-hidden="true">
+        <video class="thanks-clip clip-bottom-a" src="assets/thanks-1.mp4" muted loop playsinline preload="metadata"></video>
+        <video class="thanks-clip clip-bottom-b" src="assets/thanks-2.mp4" muted loop playsinline preload="metadata"></video>
+        <video class="thanks-clip clip-top-a" src="assets/thanks-3.mp4" muted loop playsinline preload="metadata"></video>
+        <video class="thanks-clip clip-top-b" src="assets/thanks-4.mp4" muted loop playsinline preload="metadata"></video>
+      </div>
+      <div class="thank-message">
+        <h2 class="slide-title">Thank you for your attention</h2>
+        <p>Questions and discussion</p>
       </div>
     </section>
   </main>
 
   <nav class="controls" aria-label="Slide controls">
     <button type="button" id="prev" aria-label="Previous slide">&lt;</button>
-    <span class="count" id="count">1 / 18</span>
+    <span class="count" id="count">1 / 19</span>
     <button type="button" id="next" aria-label="Next slide">&gt;</button>
     <button type="button" id="full" aria-label="Toggle fullscreen">[]</button>
   </nav>
@@ -2070,6 +2207,27 @@
     const count = document.getElementById("count");
     const progress = document.getElementById("progress");
     let index = 0;
+    const backgroundVideos = [
+      "assets/bg-water-1.mp4",
+      "assets/bg-water-2.mp4",
+      "assets/bg-water-3.mp4",
+      "assets/bg-water-4.mp4",
+      "assets/bg-water-5.mp4",
+      "assets/bg-water-6.mp4"
+    ];
+
+    slides.forEach((slide, i) => {
+      const video = document.createElement("video");
+      video.className = "slide-video-bg";
+      video.src = slide.dataset.video || backgroundVideos[i % backgroundVideos.length];
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = i < 2 ? "auto" : "metadata";
+      video.setAttribute("aria-hidden", "true");
+      video.setAttribute("playsinline", "");
+      slide.insertBefore(video, slide.firstChild);
+    });
 
     function fitOneLineTitles() {
       document.querySelectorAll(".slide-title, .hero-title").forEach((title) => {
@@ -2088,6 +2246,22 @@
     fitOneLineTitles();
     document.fonts?.ready.then(fitOneLineTitles);
 
+    function syncSlideVideos(resetActive = false) {
+      slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.querySelectorAll("video").forEach((video) => {
+          if (active) {
+            if (resetActive) {
+              try { video.currentTime = 0; } catch {}
+            }
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      });
+    }
+
     function updateSlides(target) {
       index = (target + slides.length) % slides.length;
       slides.forEach((slide, i) => {
@@ -2099,6 +2273,7 @@
       progress.style.width = `${((index + 1) / slides.length) * 100}%`;
       document.title = `${slides[index].dataset.title} Nature Based Solutions`;
       fitOneLineTitles();
+      syncSlideVideos(true);
     }
 
     prevButton.addEventListener("click", () => updateSlides(index - 1));
